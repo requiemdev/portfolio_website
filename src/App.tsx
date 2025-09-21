@@ -3,7 +3,6 @@ import Card from "./components/Card";
 import LiquidEther from "./components/LiquidEther";
 import GradientText from "./components/GradientText";
 import LogoLoop from "./components/LogoLoop";
-import resumePdf from "./assets/resume.pdf"; // add this at top
 import {
   SiReact,
   SiTypescript,
@@ -446,7 +445,7 @@ export default function App() {
 
                   {/* blackish glass button with purple glow; uses download attribute */}
                   <a
-                    href={resumePdf}
+                    href="/resume.pdf"
                     download="RyanTsai-CV.pdf"
                     className="mt-2 inline-flex items-center justify-center px-4 py-2 rounded-2xl bg-white/6 backdrop-blur-md border border-zinc-700/40 text-white text-sm font-medium transition-transform duration-200 hover:bg-white/8 hover:scale-105 text-center"
                     aria-label="Download CV"
