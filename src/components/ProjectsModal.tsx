@@ -1,6 +1,8 @@
 import ferrousImg from "../images/ferrous.png";
 import astralImagesImg from "../images/astral_images.png";
 import astralBotImg from "../images/astral_bot.png";
+import ffxivImg from "../images/ffxiv.png";
+import se283Img from "../images/se281a3.png";
 
 type Props = {
   isOpen: boolean;
@@ -42,6 +44,7 @@ export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
             </button>
           </div>
 
+          {/* FERROUS FELLOW */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             <div className="bg-zinc-700/40 backdrop-blur-xl rounded-2xl border border-zinc-600/50 p-6 hover:border-purple-500/30 transition-all duration-300">
               <div className="h-48 rounded-xl mb-4 overflow-hidden">
@@ -72,12 +75,18 @@ export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
                 </span>
               </div>
               <div className="flex gap-3">
-                <button className="px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl hover:from-purple-600 hover:to-violet-600 transition-all">
+                <a
+                  href="https://github.com/requiemdev/ECSE_Design_Competition"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl hover:from-purple-600 hover:to-violet-600 transition-all"
+                >
                   GitHub
-                </button>
+                </a>
               </div>
             </div>
 
+            {/* ASTRAL IMAGES */}
             <div className="bg-zinc-700/40 backdrop-blur-xl rounded-2xl border border-zinc-600/50 p-6 hover:border-purple-500/30 transition-all duration-300">
               <div className="h-48 rounded-xl mb-4 overflow-hidden">
                 <img
@@ -110,12 +119,18 @@ export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
                 </span>
               </div>
               <div className="flex gap-3">
-                <button className="px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl hover:from-purple-600 hover:to-violet-600 transition-all">
+                <a
+                  href="https://github.com/requiemdev/astral-image-host "
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl hover:from-purple-600 hover:to-violet-600 transition-all"
+                >
                   GitHub
-                </button>
+                </a>
               </div>
             </div>
 
+            {/* ASTRAL MUSIC */}
             <div className="bg-zinc-700/40 backdrop-blur-xl rounded-2xl border border-zinc-600/50 p-6 hover:border-purple-500/30 transition-all duration-300">
               <div className="h-48 rounded-xl mb-4 overflow-hidden">
                 <img
@@ -146,13 +161,93 @@ export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
                 </span>
               </div>
               <div className="flex gap-3">
-                <button className="px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl hover:from-purple-600 hover:to-violet-600 transition-all">
+                <a
+                  href="https://github.com/requiemdev/astral_bot"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl hover:from-purple-600 hover:to-violet-600 transition-all"
+                >
                   GitHub
-                </button>
+                </a>
               </div>
             </div>
 
-            {/* the rest of the projects have identical structure; for brevity only three are included here */}
+            {/* FFXIV MARKET PREDICT */}
+            <div className="bg-zinc-700/40 backdrop-blur-xl rounded-2xl border border-zinc-600/50 p-6 hover:border-purple-500/30 transition-all duration-300">
+              <div className="h-48 rounded-xl mb-4 overflow-hidden">
+                <img
+                  src={ffxivImg}
+                  alt="FFXIV Market Predict"
+                  className="w-full h-full object-cover rounded-xl"
+                />
+              </div>
+              <h3 className="text-xl text-white mb-2">FFXIV Market Predict</h3>
+              <p className="text-white/70 mb-4">
+                Created a basic API wrapper for crowd-sourced game market
+                information, and applied a random forest regressor with sklearn
+                to create a basic prediction model for in-game prices.
+              </p>
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                  Node.js
+                </span>
+                <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                  Express.js
+                </span>
+                <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                  sklearn
+                </span>
+              </div>
+              <div className="flex gap-3">
+                <a
+                  href="https://github.com/requiemdev/ffxiv_market_predict"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl hover:from-purple-600 hover:to-violet-600 transition-all"
+                >
+                  GitHub
+                </a>
+              </div>
+            </div>
+
+            {/* SE281 */}
+            <div className="bg-zinc-700/40 backdrop-blur-xl rounded-2xl border border-zinc-600/50 p-6 hover:border-purple-500/30 transition-all duration-300">
+              <div className="h-48 rounded-xl mb-4 overflow-hidden">
+                <img
+                  src={se283Img}
+                  alt="Assignment: Operator Management System"
+                  className="w-full h-full object-cover rounded-xl"
+                />
+              </div>
+              <h3 className="text-xl text-white mb-2">
+                Assignment: Risk Simulation
+              </h3>
+              <p className="text-white/70 mb-4">
+                Assignment for the course SOFTENG 281: Object Oriented
+                Programming. Implement design patterns, data structures and
+                algorithms to create a CLI adaptation of classic board game
+                Risk. Passed all test cases, and received an overall of 99.7% in
+                the course.
+              </p>
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                  Java
+                </span>
+                <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                  Maven
+                </span>
+              </div>
+              <div className="flex gap-3">
+                <a
+                  href="https://github.com/requiemdev/SOFTENG281_A3"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl hover:from-purple-600 hover:to-violet-600 transition-all"
+                >
+                  GitHub
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
