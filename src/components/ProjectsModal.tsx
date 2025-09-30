@@ -3,6 +3,7 @@ import astralImagesImg from "../images/astral_images.png";
 import astralBotImg from "../images/astral_bot.png";
 import ffxivImg from "../images/ffxiv.png";
 import se283Img from "../images/se281a3.png";
+import preloadImages from "../hooks/preloadImages"
 
 type Props = {
   isOpen: boolean;
@@ -11,6 +12,15 @@ type Props = {
 };
 
 export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
+  preloadImages([
+    ferrousImg,
+    astralBotImg,
+    astralImagesImg,
+    ffxivImg,
+    se283Img
+  ])
+
+
   if (!isOpen) return null;
 
   return (
