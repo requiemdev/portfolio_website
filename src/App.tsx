@@ -23,7 +23,6 @@ import Plasma from "./components/Plasma";
 import ProjectsModal from "./components/ProjectsModal";
 import ContactModal from "./components/ContactModal";
 import AboutModal from "./components/AboutModal";
-import { Analytics } from "@vercel/analytics/react";
 
 // Logos for stack wheel (unified purple color to match gradient)
 const logoColorClass = "w-6 h-6 text-[#c084fc]";
@@ -476,7 +475,6 @@ export default function App() {
         isClosing={isClosing}
         onClose={handleCloseModal}
       />
-      <Analytics />
     </>
   );
 }
