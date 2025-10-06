@@ -121,7 +121,8 @@ export default function App() {
 
   return (
     <>
-  <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-zinc-900 to-purple-950 p-1 flex items-center justify-center overflow-auto md:overflow-hidden">
+  <div className="relative min-h-screen md:h-screen bg-gradient-to-br from-slate-950 via-zinc-900 to-purple-950 p-1 flex md:items-center md:justify-center items-start justify-start overflow-hidden">
+    <div className="ios-scroll-wrapper">
         {/* place the canvas absolutely and behind everything, and allow pointer events on it */}
         <LiquidEther
           className="absolute inset-0 z-0"
@@ -143,7 +144,7 @@ export default function App() {
         />
         {/* Outer glass container: ignore pointer events so underlying canvas gets mouse moves */}
         {/* allow children descenders to show — don't clip */}
-        <div className="absolute inset-2 z-10 group rounded-3xl border border-zinc-700/50 bg-zinc-800/30 backdrop-blur-xl overflow-visible transition-all duration-300 hover:border-purple-500/20 pointer-events-none">
+        <div className="absolute inset-2 z-10 group rounded-3xl border border-zinc-700/50 bg-zinc-800/30 backdrop-blur-xl overflow-visible md:overflow-hidden transition-all duration-300 hover:border-purple-500/20 pointer-events-auto md:pointer-events-none">
           {/* Make this wrapper ignore pointer events so the canvas underneath receives all moves */}
           {/* add padding so first/last columns have equal spacing from the container */}
           {/* add extra top padding while keeping equal horizontal spacing */}
@@ -165,7 +166,7 @@ export default function App() {
                 the outer wrapper will scroll if content overflows.
             */}
             <div
-              className="md:grid grid-cols-1 md:grid-cols-[minmax(180px,320px)_1fr_minmax(120px,200px)] gap-2 h-full min-h-0 overflow-auto md:overflow-visible"
+              className="md:grid grid-cols-1 md:grid-cols-[minmax(180px,320px)_1fr_minmax(120px,200px)] gap-2 h-full min-h-0 overflow-visible md:overflow-hidden"
               style={{
                 gridTemplateRows: "repeat(3, 1fr)",
               }}
@@ -466,7 +467,8 @@ export default function App() {
             </div>
           </div>
         </div>
-      </div>
+    </div>
+  </div>
 
       {/* Modals - extracted to components to preserve identical markup and behaviour */}
       <ProjectsModal

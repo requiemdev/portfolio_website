@@ -229,6 +229,39 @@ body,
     -webkit-overflow-scrolling: touch;
     overflow-y: auto;
   }
+
+  /* iOS scroll wrapper: fixed container on small screens that becomes the only scroll surface */
+  .ios-scroll-wrapper {
+    position: fixed;
+    inset: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    z-index: 1;
+  }
+
+  /* Prevent document/body from scrolling on mobile - only ios-scroll-wrapper scrolls */
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Restore normal flow on desktop */
+  .ios-scroll-wrapper {
+    position: static;
+    inset: auto;
+    overflow: visible;
+  }
+
+  html,
+  body {
+    position: static;
+    overflow: auto;
+  }
 }
 
 /* Gradient used by GradientText */
