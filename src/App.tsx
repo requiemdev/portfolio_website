@@ -121,7 +121,7 @@ export default function App() {
 
   return (
     <>
-  <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-zinc-900 to-purple-950 p-1 flex items-center justify-center overflow-hidden">
+  <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-zinc-900 to-purple-950 p-1 flex items-center justify-center overflow-auto md:overflow-hidden">
         {/* place the canvas absolutely and behind everything, and allow pointer events on it */}
         <LiquidEther
           className="absolute inset-0 z-0 pointer-events-auto"
