@@ -121,7 +121,7 @@ export default function App() {
 
   return (
     <>
-      <div className="relative h-screen bg-gradient-to-br from-slate-950 via-zinc-900 to-purple-950 p-1 flex items-center justify-center overflow-hidden">
+  <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-zinc-900 to-purple-950 p-1 flex items-center justify-center overflow-hidden">
         {/* place the canvas absolutely and behind everything, and allow pointer events on it */}
         <LiquidEther
           className="absolute inset-0 z-0 pointer-events-auto"
@@ -147,16 +147,26 @@ export default function App() {
           {/* Make this wrapper ignore pointer events so the canvas underneath receives all moves */}
           {/* add padding so first/last columns have equal spacing from the container */}
           {/* add extra top padding while keeping equal horizontal spacing */}
+          {/*
+            Responsive behavior:
+            - On small screens we collapse the 3-column/3-row grid into a single vertical column
+              and allow the outer container to scroll vertically.
+            - On larger screens the original grid layout is kept.
+          */}
           <div className="w-full h-full pointer-events-none px-2 pt-3 pb-2 min-h-0">
             {/* Grid:
                left and right columns are clamped between 140px and 220px,
                middle column grows to fill remaining space (1fr).
                rows are equally sized. Using inline styles for precise grid-template values. */}
+            {/*
+              Use a responsive layout:
+              - `md:grid` enables a CSS grid on medium+ screens (>=768px)
+              - On small screens the container becomes a vertical flow (single column) and
+                the outer wrapper will scroll if content overflows.
+            */}
             <div
-              className="grid gap-2 h-full min-h-0"
+              className="md:grid grid-cols-1 md:grid-cols-[minmax(180px,320px)_1fr_minmax(120px,200px)] gap-2 h-full min-h-0 overflow-auto md:overflow-visible"
               style={{
-                gridTemplateColumns:
-                  "minmax(180px,320px) 1fr minmax(120px,200px)",
                 gridTemplateRows: "repeat(3, 1fr)",
               }}
             >
@@ -286,7 +296,7 @@ export default function App() {
                   that contains a nested 2-column grid using a 60% / 40% split. */}
               <div className="col-span-3 pointer-events-none w-full h-full min-h-0">
                 <div
-                  className="grid gap-4 h-full"
+                  className="grid gap-4 h-full grid-cols-1 md:grid-cols-[60%_40%]"
                   style={{ gridTemplateColumns: "60% 40%" }}
                 >
                   {/* Left (60%) */}

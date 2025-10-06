@@ -203,6 +203,27 @@ body,
   min-height: 100vh;
 }
 
+/* Mobile: allow the main wrapper to grow taller than the viewport and become scrollable */
+@media (max-width: 767px) {
+  /* make sure the main app area isn't forced to a fixed viewport height */
+  .relative.h-screen {
+    min-height: 100vh;
+    height: auto;
+  }
+
+  /* ensure any internal grid rows can grow naturally */
+  .grid > * {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  /* reduce large paddings on very small screens */
+  .px-2 {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+}
+
 /* Gradient used by GradientText */
 @keyframes gradient {
   0% {
