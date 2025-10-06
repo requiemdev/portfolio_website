@@ -124,7 +124,7 @@ export default function App() {
   <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-zinc-900 to-purple-950 p-1 flex items-center justify-center overflow-auto md:overflow-hidden">
         {/* place the canvas absolutely and behind everything, and allow pointer events on it */}
         <LiquidEther
-          className="absolute inset-0 z-0 pointer-events-auto"
+          className="absolute inset-0 z-0"
           colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
           mouseForce={30}
           cursorSize={65}
@@ -297,7 +297,6 @@ export default function App() {
               <div className="col-span-3 pointer-events-none w-full h-full min-h-0">
                 <div
                   className="grid gap-4 h-full grid-cols-1 md:grid-cols-[60%_40%]"
-                  style={{ gridTemplateColumns: "60% 40%" }}
                 >
                   {/* Left (60%) */}
                   <Card

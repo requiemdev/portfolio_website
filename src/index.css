@@ -222,6 +222,13 @@ body,
     padding-left: 0.5rem !important;
     padding-right: 0.5rem !important;
   }
+
+  /* Enable native momentum (smooth) scrolling on iOS for the main scroll container */
+  .relative.min-h-screen,
+  .mobile-scroll {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+  }
 }
 
 /* Gradient used by GradientText */
