@@ -3,7 +3,9 @@ import astralImagesImg from "../images/astral_images.png";
 import astralBotImg from "../images/astral_bot.png";
 import ffxivImg from "../images/ffxiv.png";
 import se283Img from "../images/se281a3.png";
-import preloadImages from "../hooks/preloadImages"
+import record from "../images/record.jpg";
+import meowpad from "../images/meowpad.png"
+import preloadImages from "../hooks/preloadImages";
 
 type Props = {
   isOpen: boolean;
@@ -17,9 +19,10 @@ export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
     astralBotImg,
     astralImagesImg,
     ffxivImg,
-    se283Img
-  ])
-
+    se283Img,
+    record,
+    meowpad,
+  ]);
 
   if (!isOpen) return null;
 
@@ -87,6 +90,100 @@ export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
               <div className="flex gap-3">
                 <a
                   href="https://github.com/requiemdev/ECSE_Design_Competition"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl hover:from-purple-600 hover:to-violet-600 transition-all"
+                >
+                  GitHub
+                </a>
+              </div>
+            </div>
+
+            {/* Record Player */}
+            <div className="bg-zinc-700/40 backdrop-blur-xl rounded-2xl border border-zinc-600/50 p-6 hover:border-purple-500/30 transition-all duration-300">
+              <div className="h-48 rounded-xl mb-4 overflow-hidden">
+                <img
+                  src={record}
+                  alt="RFID Record Player"
+                  className="w-full h-full object-cover rounded-xl"
+                />
+              </div>
+              <h3 className="text-xl text-white mb-2">RFID Record Player</h3>
+              <p className="text-white/70 mb-4">
+                RFID Record player inspired by{" "}
+                <a href="https://github.com/fatihak/RFID-Record-Player">
+                  fatihak's project
+                </a>
+                . Designed to be cost effective by replacing the original
+                Raspberry Pi Zero 2W MCU with an ESP-32. When a "record" is
+                placed onto the turntable, an internal RFID reader picks up on
+                the RFID tag on the disc, which maps to the specific song's
+                Spotify track ID. When the tonearm is in the active position,
+                the song is played on the user's Spotify, and the record spins.
+                When the tonearm is moved away, the record stops spinning, and
+                the music is paused on the user's device.
+              </p>
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                  ESP-32
+                </span>
+                <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                  C
+                </span>
+                <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                  Python
+                </span>
+              </div>
+              <div className="flex gap-3">
+                <a
+                  href="https://github.com/requiemdev/RFID-Record-Player-ESP32"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl hover:from-purple-600 hover:to-violet-600 transition-all"
+                >
+                  GitHub
+                </a>
+              </div>
+            </div>
+
+            {/* MeowPad */}
+            <div className="bg-zinc-700/40 backdrop-blur-xl rounded-2xl border border-zinc-600/50 p-6 hover:border-purple-500/30 transition-all duration-300">
+              <div className="h-48 rounded-xl mb-4 overflow-hidden">
+                <img
+                  src={meowpad}
+                  alt="MeowPad Custom Number Pad"
+                  className="w-full h-full object-cover rounded-xl"
+                />
+              </div>
+              <h3 className="text-xl text-white mb-2">MeowPad</h3>
+              <p className="text-white/70 mb-4">
+                Designed a hot-swappable number pad from scratch using KiCAD for
+                PCB design, AutoCAD Inventor for case and plate design, and QMK
+                for firmware. Powered by a Arduino Pro Micro footprint MCU, and
+                equipped with an OLED display end EC11 rotary encoder knob, this
+                numberpad is a fully customisable with switches, keycaps and
+                cases. The MeowPad supports a 3D printed case with PCB mounted
+                standoffs, as well as a stacked acrylic plate mount. This
+                project is currently finished with PCB design, and is in the
+                manufacturing and component sourcing process.
+              </p>
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                  KiCAD
+                </span>
+                <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                  C
+                </span>
+                <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                  AutoCAD Inventor
+                </span>
+                <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                  3D Printing
+                </span>
+              </div>
+              <div className="flex gap-3">
+                <a
+                  href="https://github.com/requiemdev/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl hover:from-purple-600 hover:to-violet-600 transition-all"
