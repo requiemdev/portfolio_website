@@ -159,9 +159,9 @@ export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
               <p className="text-white/70 mb-4">
                 Designed a hot-swappable number pad from scratch using KiCAD for
                 PCB design, AutoCAD Inventor for case and plate design, and QMK
-                for firmware. Powered by a Arduino Pro Micro footprint MCU, and
-                equipped with an OLED display end EC11 rotary encoder knob, this
-                numberpad is a fully customisable with switches, keycaps and
+                for firmware. Powered by an Arduino Pro Micro footprint MCU, and
+                equipped with an OLED display and EC11 rotary encoder knob, this
+                numberpad is fully customisable with switches, keycaps and
                 cases. The MeowPad supports a 3D printed case with PCB mounted
                 standoffs, as well as a stacked acrylic plate mount. This
                 project is currently finished with PCB design, and is in the

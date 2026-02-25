@@ -40,13 +40,12 @@ export default function AboutModal({ isOpen, isClosing, onClose }: Props) {
 
           <div className="space-y-4 text-white/80">
             <p>
-              I'm currently a 2nd year Software Engineering student at the
+              I'm currently a 3rd year Software Engineering student at the
               University of Auckland.
             </p>
             <p>
               My interests include back-end applications, API creation and
-              integration, as well as machine learning and artificial
-              intelligence.
+              integration, machine learning as well as some electronic design.
             </p>
             <p>
               Outside of work I enjoy playing the guitar, solving Rubik's cubes
