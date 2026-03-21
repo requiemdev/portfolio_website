@@ -14,6 +14,7 @@ import se206 from "../images/se206.png";
 import se2061 from "../images/se2061.png";
 import se2063 from "../images/se2063.png";
 import ff from "../images/ff.jpg";
+import meowpad_built from "../images/meowpad_built.jpg";
 import preloadImages from "../hooks/preloadImages";
 
 type Props = {
@@ -87,6 +88,7 @@ const projects: Project[] = [
       </>
     ),
     images: [
+      { src: meowpad_built, alt: "MeowPad - Built View" },
       { src: meowpad_pcb, alt: "MeowPad - PCB View" },
       { src: meowpad, alt: "MeowPad Custom Number Pad" },
       { src: meowpad_cad, alt: "MeowPad - Cad View" },
