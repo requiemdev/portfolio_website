@@ -83,8 +83,7 @@ const projects: Project[] = [
         with an OLED display and EC11 rotary encoder knob, this numberpad is
         fully customisable with switches, keycaps and cases. The MeowPad
         supports a 3D printed case with PCB mounted standoffs, as well as a
-        stacked acrylic plate mount. This project is currently finished with PCB
-        design, and is in the manufacturing and component sourcing process.
+        stacked acrylic plate mount. 
       </>
     ),
     images: [
