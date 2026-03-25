@@ -129,11 +129,11 @@ export default function App() {
           colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
           mouseForce={30}
           cursorSize={65}
-          isViscous={true}
+          isViscous={false}
           viscous={15}
-          iterationsViscous={30}
-          iterationsPoisson={30}
-          resolution={0.5}
+          iterationsViscous={5}
+          iterationsPoisson={5}
+          resolution={0.2}
           isBounce={false}
           autoDemo={true}
           autoSpeed={0.25}
@@ -144,7 +144,7 @@ export default function App() {
         />
         {/* Outer glass container: ignore pointer events so underlying canvas gets mouse moves */}
         {/* allow children descenders to show — don't clip */}
-        <div className="absolute inset-2 z-10 group rounded-3xl border border-zinc-700/50 bg-zinc-800/30 backdrop-blur-xl overflow-visible md:overflow-hidden transition-all duration-300 hover:border-purple-500/20 pointer-events-auto md:pointer-events-none">
+        <div className="absolute inset-2 z-10 group rounded-3xl border border-zinc-700/50 bg-zinc-800/40 backdrop-blur-sm overflow-visible md:overflow-hidden transition-all duration-300 hover:border-purple-500/20 pointer-events-auto md:pointer-events-none">
           {/* Make this wrapper ignore pointer events so the canvas underneath receives all moves */}
           {/* add padding so first/last columns have equal spacing from the container */}
           {/* add extra top padding while keeping equal horizontal spacing */}

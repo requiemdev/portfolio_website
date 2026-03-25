@@ -41,7 +41,7 @@ export default function ContactModal({ isOpen, isClosing, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className={`bg-zinc-800/60 backdrop-blur-xl rounded-3xl border border-zinc-700/50 max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 relative transition-all duration-500 ${
+        className={`bg-zinc-800/60 backdrop-blur-md rounded-3xl border border-zinc-700/50 max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 relative transition-all duration-500 ${
           isClosing
             ? "animate-out slide-out-to-bottom-4 zoom-out-95 duration-500"
             : "animate-in slide-in-from-bottom-4 zoom-in-95 duration-500"

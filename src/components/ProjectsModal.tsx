@@ -219,7 +219,7 @@ function ProjectCard({
     : 0;
 
   return (
-    <div className="bg-zinc-700/40 backdrop-blur-xl rounded-2xl border border-zinc-600/50 p-6 hover:border-purple-500/30 transition-all duration-300">
+    <div className="bg-zinc-700/40 backdrop-blur-md rounded-2xl border border-zinc-600/50 p-6 hover:border-purple-500/30 transition-all duration-300">
       <div className="relative h-48 rounded-xl mb-4 overflow-hidden">
         <div
           className="project-carousel-track"
@@ -333,10 +333,24 @@ export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
 
           const currentImageIndex =
             nextIndexes[projectIndex] ?? getInitialImageIndex(projectIndex);
-          nextIndexes[projectIndex] = currentImageIndex + 1;
+          
+          // Guard against incrementing past the buffer when tab is inactive
+          if (currentImageIndex < project.images.length + 1) {
+            nextIndexes[projectIndex] = currentImageIndex + 1;
+          }
         });
 
         return nextIndexes;
+      });
+
+      setIsTrackAnimating((prev) => {
+        const next = { ...prev };
+        projects.forEach((project, projectIndex) => {
+          if (project.images.length > 1) {
+            next[projectIndex] = true;
+          }
+        });
+        return next;
       });
     }, 5000);
 
@@ -346,39 +360,36 @@ export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
   }, [isOpen]);
 
   const handlePreviousImage = (projectIndex: number) => {
+    const currentImageIndex = imageIndexes[projectIndex] ?? getInitialImageIndex(projectIndex);
+
+    if (currentImageIndex <= 0) return;
+
     setIsTrackAnimating((currentState) => ({
       ...currentState,
       [projectIndex]: true,
     }));
 
-    setImageIndexes((currentIndexes) => {
-      const currentImageIndex =
-        currentIndexes[projectIndex] ?? getInitialImageIndex(projectIndex);
-      const previousImageIndex = currentImageIndex - 1;
-
-      return {
-        ...currentIndexes,
-        [projectIndex]: previousImageIndex,
-      };
-    });
+    setImageIndexes((currentIndexes) => ({
+      ...currentIndexes,
+      [projectIndex]: (currentIndexes[projectIndex] ?? getInitialImageIndex(projectIndex)) - 1,
+    }));
   };
 
   const handleNextImage = (projectIndex: number) => {
+    const imageCount = projects[projectIndex].images.length;
+    const currentImageIndex = imageIndexes[projectIndex] ?? getInitialImageIndex(projectIndex);
+
+    if (currentImageIndex >= imageCount + 1) return;
+
     setIsTrackAnimating((currentState) => ({
       ...currentState,
       [projectIndex]: true,
     }));
 
-    setImageIndexes((currentIndexes) => {
-      const currentImageIndex =
-        currentIndexes[projectIndex] ?? getInitialImageIndex(projectIndex);
-      const nextImageIndex = currentImageIndex + 1;
-
-      return {
-        ...currentIndexes,
-        [projectIndex]: nextImageIndex,
-      };
-    });
+    setImageIndexes((currentIndexes) => ({
+      ...currentIndexes,
+      [projectIndex]: (currentIndexes[projectIndex] ?? getInitialImageIndex(projectIndex)) + 1,
+    }));
   };
 
   const handleTrackTransitionEnd = (projectIndex: number) => {
@@ -388,32 +399,29 @@ export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
       return;
     }
 
-    setImageIndexes((currentIndexes) => {
-      const currentImageIndex =
-        currentIndexes[projectIndex] ?? getInitialImageIndex(projectIndex);
+    const currentImageIndex = imageIndexes[projectIndex] ?? getInitialImageIndex(projectIndex);
 
-      if (currentImageIndex !== 0 && currentImageIndex !== imageCount + 1) {
-        return currentIndexes;
-      }
+    if (currentImageIndex !== 0 && currentImageIndex !== imageCount + 1) {
+      return;
+    }
 
-      setIsTrackAnimating((currentState) => ({
-        ...currentState,
-        [projectIndex]: false,
-      }));
+    setIsTrackAnimating((currentState) => ({
+      ...currentState,
+      [projectIndex]: false,
+    }));
 
+    setImageIndexes((currentIndexes) => ({
+      ...currentIndexes,
+      [projectIndex]: currentImageIndex === 0 ? imageCount : 1,
+    }));
+
+    window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => {
-          setIsTrackAnimating((currentState) => ({
-            ...currentState,
-            [projectIndex]: true,
-          }));
-        });
+        setIsTrackAnimating((currentState) => ({
+          ...currentState,
+          [projectIndex]: true,
+        }));
       });
-
-      return {
-        ...currentIndexes,
-        [projectIndex]: currentImageIndex === 0 ? imageCount : 1,
-      };
     });
   };
 
@@ -429,7 +437,7 @@ export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className={`bg-zinc-800/60 backdrop-blur-xl rounded-3xl border border-zinc-700/50 max-w-7xl w-full max-h-[90vh] overflow-y-auto p-8 relative transition-all duration-500 ${
+        className={`bg-zinc-800/60 backdrop-blur-md rounded-3xl border border-zinc-700/50 max-w-7xl w-full max-h-[90vh] overflow-y-auto p-8 relative transition-all duration-500 ${
           isClosing
             ? "animate-out slide-out-to-bottom-4 zoom-out-95 duration-500"
             : "animate-in slide-in-from-bottom-4 zoom-in-95 duration-500"

@@ -132,7 +132,7 @@ export default function LiquidEther({
       clock: THREE.Clock | null = null;
       init(container: HTMLElement) {
         this.container = container;
-        this.pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        this.pixelRatio = 1; // Opt for better performance
         this.resize();
         this.renderer = new THREE.WebGLRenderer({
           antialias: true,
