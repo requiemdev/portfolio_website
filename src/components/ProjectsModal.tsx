@@ -1,21 +1,24 @@
 import { useEffect, useState, type ReactNode } from "react";
-import ferrousImg from "../images/ferrous.png";
-import astralImagesImg from "../images/astral_images.png";
-import astralBotImg from "../images/astral_bot.png";
-import ffxivImg from "../images/ffxiv.png";
-import se283Img from "../images/se281a3.png";
-import record from "../images/record.jpg";
-import meowpad from "../images/meowpad.png";
+import ferrousImg from "../images/ferrous.webp";
+import astralImagesImg from "../images/astral_images.webp";
+import astralBotImg from "../images/astral_bot.webp";
+import ffxivImg from "../images/ffxiv.webp";
+import se283Img from "../images/se281a3.webp";
+import record from "../images/record.webp";
+import meowpad from "../images/meowpad.webp";
 import se281 from "../images/281.webp";
-import meowpad_cad from "../images/meowpad_cad.png";
-import meowpad_pcb from "../images/meowpad_pcb.jpg";
-import record_bb from "../images/record_bb.jpg";
-import se206 from "../images/se206.png";
-import se2061 from "../images/se2061.png";
-import se2063 from "../images/se2063.png";
-import ff from "../images/ff.jpg";
-import meowpad_built from "../images/meowpad_built.jpg";
-import preloadImages from "../hooks/preloadImages";
+import meowpad_cad from "../images/meowpad_cad.webp";
+import meowpad_pcb from "../images/meowpad_pcb.webp";
+import record_bb from "../images/record_bb.webp";
+import se206 from "../images/se206.webp";
+import se2061 from "../images/se2061.webp";
+import se2063 from "../images/se2063.webp";
+import ff from "../images/ff.webp";
+import meowpad_built from "../images/meowpad_built.webp";
+import tankArenaAward from "../images/tank_arena_award.webp";
+import tankArenaController from "../images/tank_arena_controller.webp";
+import tankArenaHardware from "../images/tank_arena_hardware.webp";
+import tankArenaTanks from "../images/tank_arena_tanks.webp";
 
 type Props = {
   isOpen: boolean;
@@ -29,9 +32,49 @@ type Project = {
   images: Array<{ src: string; alt: string }>;
   tags: string[];
   github: string;
+  linkedin?: string;
 };
 
 const projects: Project[] = [
+  {
+    title: "Tank Arena",
+    description: (
+      <>
+        Engineering Excellence Award-winning two-player laser-tag duel built
+        with custom 3D-printed ESP32 tanks, custom PCBs, servo-mounted IR
+        emitters, and four-direction hit sensing. Designed and implemented the
+        WebSocket game server and browser interfaces for real-time controls, hit
+        validation, match progression, spectator views, and a persistent
+        leaderboard, achieving sub-10 ms local-network latency with 0% packet
+        loss during testing.
+      </>
+    ),
+    images: [
+      { src: tankArenaTanks, alt: "Two custom-built Tank Arena vehicles" },
+      {
+        src: tankArenaController,
+        alt: "Tank Arena browser controller interface",
+      },
+      {
+        src: tankArenaHardware,
+        alt: "Tank Arena hardware and live match display",
+      },
+      {
+        src: tankArenaAward,
+        alt: "Tank Arena team receiving the Engineering Excellence Award",
+      },
+    ],
+    tags: [
+      "ESP32",
+      "WebSockets",
+      "Embedded Systems",
+      "Custom PCB",
+      "3D Printing",
+    ],
+    github: "https://github.com/requiemdev/Tank-Arena-26-ECSE-Design-Comp",
+    linkedin:
+      "https://www.linkedin.com/feed/update/urn:li:activity:7488355540826300416/",
+  },
   {
     title: "Ferrous Fellow",
     description: (
@@ -83,7 +126,7 @@ const projects: Project[] = [
         with an OLED display and EC11 rotary encoder knob, this numberpad is
         fully customisable with switches, keycaps and cases. The MeowPad
         supports a 3D printed case with PCB mounted standoffs, as well as a
-        stacked acrylic plate mount. 
+        stacked acrylic plate mount.
       </>
     ),
     images: [
@@ -185,10 +228,6 @@ const projects: Project[] = [
   },
 ];
 
-const allProjectImages = projects.flatMap((project) =>
-  project.images.map((image) => image.src),
-);
-
 type ProjectCardProps = {
   project: Project;
   imageIndex: number;
@@ -238,6 +277,8 @@ function ProjectCard({
                 src={image.src}
                 alt={image.alt}
                 className="w-full h-full object-cover rounded-xl"
+                loading="lazy"
+                decoding="async"
               />
             </div>
           ))}
@@ -249,7 +290,7 @@ function ProjectCard({
               <button
                 type="button"
                 onClick={onPreviousImage}
-                className="pointer-events-auto h-8 w-8 rounded-full bg-black/45 text-white hover:bg-black/60 transition-colors"
+                className="pointer-events-auto h-11 w-11 rounded-full bg-black/55 text-white hover:bg-black/70 transition-colors"
                 aria-label={`Previous image for ${project.title}`}
               >
                 &lt;
@@ -257,7 +298,7 @@ function ProjectCard({
               <button
                 type="button"
                 onClick={onNextImage}
-                className="pointer-events-auto h-8 w-8 rounded-full bg-black/45 text-white hover:bg-black/60 transition-colors"
+                className="pointer-events-auto h-11 w-11 rounded-full bg-black/55 text-white hover:bg-black/70 transition-colors"
                 aria-label={`Next image for ${project.title}`}
               >
                 &gt;
@@ -297,10 +338,20 @@ function ProjectCard({
           href={project.github}
           target="_blank"
           rel="noopener noreferrer"
-          className="px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl hover:from-purple-600 hover:to-violet-600 transition-all"
+          className="inline-flex min-h-11 items-center px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl hover:from-purple-600 hover:to-violet-600 transition-all"
         >
           GitHub
         </a>
+        {project.linkedin && (
+          <a
+            href={project.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center px-4 py-2 bg-white/8 text-white rounded-xl border border-white/10 hover:bg-white/12 transition-colors"
+          >
+            LinkedIn Post
+          </a>
+        )}
       </div>
     </div>
   );
@@ -311,8 +362,6 @@ export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
   const [isTrackAnimating, setIsTrackAnimating] = useState<
     Record<number, boolean>
   >({});
-
-  preloadImages(allProjectImages);
 
   const getInitialImageIndex = (projectIndex: number) =>
     projects[projectIndex].images.length > 1 ? 1 : 0;
@@ -437,22 +486,28 @@ export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className={`bg-zinc-800/60 backdrop-blur-md rounded-3xl border border-zinc-700/50 max-w-7xl w-full max-h-[90vh] overflow-y-auto p-8 relative transition-all duration-500 ${
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="projects-title"
+        className={`bg-zinc-900/90 backdrop-blur-md rounded-3xl border border-zinc-700/50 max-w-7xl w-full max-h-[90vh] overflow-y-auto p-4 sm:p-8 relative transition-all duration-300 ${
           isClosing
-            ? "animate-out slide-out-to-bottom-4 zoom-out-95 duration-500"
-            : "animate-in slide-in-from-bottom-4 zoom-in-95 duration-500"
+            ? "animate-out slide-out-to-bottom-4 zoom-out-95 duration-300"
+            : "animate-in slide-in-from-bottom-4 zoom-in-95 duration-300"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-violet-500/5 to-transparent rounded-3xl"></div>
         <div className="relative z-10">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl text-transparent bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text font-semibold">
+          <div className="flex justify-between items-center gap-3 mb-8">
+            <h2 id="projects-title" className="text-2xl sm:text-3xl text-transparent bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text font-semibold">
               Featured Projects
             </h2>
             <button
+              type="button"
               onClick={onClose}
-              className="text-white/60 hover:text-white transition-colors text-2xl"
+              className="h-11 w-11 shrink-0 text-white/60 hover:text-white transition-colors text-2xl"
+              aria-label="Close projects"
+              autoFocus
             >
               ✕
             </button>

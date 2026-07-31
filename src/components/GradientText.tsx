@@ -41,7 +41,7 @@ export default function GradientText({
     : {};
 
   return (
-    <span className={className} style={{ ...baseStyle, ...strokeStyle }}>
+    <span className={`gradient-text ${className}`} style={{ ...baseStyle, ...strokeStyle }}>
       {children}
     </span>
   );

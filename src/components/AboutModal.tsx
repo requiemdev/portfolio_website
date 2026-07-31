@@ -17,22 +17,28 @@ export default function AboutModal({ isOpen, isClosing, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className={`bg-zinc-800/60 backdrop-blur-md rounded-3xl border border-zinc-700/50 max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8 relative transition-all duration-500 ${
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="about-title"
+        className={`bg-zinc-900/90 backdrop-blur-md rounded-3xl border border-zinc-700/50 max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8 relative transition-all duration-300 ${
           isClosing
-            ? "animate-out slide-out-to-bottom-4 zoom-out-95 duration-500"
-            : "animate-in slide-in-from-bottom-4 zoom-in-95 duration-500"
+            ? "animate-out slide-out-to-bottom-4 zoom-out-95 duration-300"
+            : "animate-in slide-in-from-bottom-4 zoom-in-95 duration-300"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-violet-500/5 to-transparent rounded-3xl"></div>
         <div className="relative z-10">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl text-transparent bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text font-semibold">
+            <h2 id="about-title" className="text-2xl text-transparent bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text font-semibold">
               About Me
             </h2>
             <button
+              type="button"
               onClick={onClose}
-              className="text-white/60 hover:text-white transition-colors text-2xl"
+              className="h-11 w-11 text-white/60 hover:text-white transition-colors text-2xl"
+              aria-label="Close about"
+              autoFocus
             >
               ✕
             </button>

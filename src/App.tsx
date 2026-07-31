@@ -1,6 +1,12 @@
-import React, { useState } from "react";
+import React, {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Card from "./components/Card";
-import LiquidEther from "./components/LiquidEther";
 import GradientText from "./components/GradientText";
 import LogoLoop from "./components/LogoLoop";
 import {
@@ -19,13 +25,17 @@ import {
   SiGit,
 } from "react-icons/si";
 import { DiJava } from "react-icons/di";
-import Plasma from "./components/Plasma";
-import ProjectsModal from "./components/ProjectsModal";
 import ContactModal from "./components/ContactModal";
 import AboutModal from "./components/AboutModal";
 
+const LiquidEther = lazy(() => import("./components/LiquidEther"));
+const ProjectsModal = lazy(() => import("./components/ProjectsModal"));
+
+type ModalName = "projects" | "contact" | "about";
+
 // Logos for stack wheel (unified purple color to match gradient)
 const logoColorClass = "w-6 h-6 text-[#c084fc]";
+const etherColors = ["#5227FF", "#FF9FFC", "#B19EEF"];
 
 const langLogos = [
   {
@@ -106,42 +116,105 @@ const techLogos = [
 ];
 
 export default function App() {
-  const [activeModal, setActiveModal] = useState<
-    "projects" | "contact" | "about" | null
-  >(null);
+  const [activeModal, setActiveModal] = useState<ModalName | null>(null);
   const [isClosing, setIsClosing] = useState(false);
+  const [enableRichMotion, setEnableRichMotion] = useState(false);
+  const closeTimeoutRef = useRef<number | null>(null);
+  const modalTriggerRef = useRef<HTMLElement | null>(null);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
+    if (closeTimeoutRef.current !== null) return;
     setIsClosing(true);
-    setTimeout(() => {
+    closeTimeoutRef.current = window.setTimeout(() => {
       setActiveModal(null);
       setIsClosing(false);
+      closeTimeoutRef.current = null;
+      window.requestAnimationFrame(() => modalTriggerRef.current?.focus());
     }, 300);
+  }, []);
+
+  const openModal = (modal: ModalName, trigger: HTMLElement) => {
+    modalTriggerRef.current = trigger;
+    setIsClosing(false);
+    setActiveModal(modal);
   };
+
+  const handleModalKeyDown = (
+    event: React.KeyboardEvent<HTMLElement>,
+    modal: ModalName,
+  ) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openModal(modal, event.currentTarget);
+    }
+  };
+
+  useEffect(() => {
+    const motionQuery = window.matchMedia(
+      "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
+    );
+    const updateMotion = () => setEnableRichMotion(motionQuery.matches);
+    updateMotion();
+    motionQuery.addEventListener("change", updateMotion);
+    return () => motionQuery.removeEventListener("change", updateMotion);
+  }, []);
+
+  useEffect(() => {
+    if (!activeModal) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") handleCloseModal();
+    };
+
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [activeModal, handleCloseModal]);
+
+  useEffect(
+    () => () => {
+      if (closeTimeoutRef.current !== null) {
+        window.clearTimeout(closeTimeoutRef.current);
+      }
+    },
+    [],
+  );
 
   return (
     <>
-  <div className="relative min-h-screen md:h-screen bg-gradient-to-br from-slate-950 via-zinc-900 to-purple-950 p-1 flex md:items-center md:justify-center items-start justify-start overflow-hidden">
+  <div
+    className="relative min-h-screen md:h-screen bg-gradient-to-br from-slate-950 via-zinc-900 to-purple-950 p-1 flex md:items-center md:justify-center items-start justify-start overflow-hidden"
+    aria-hidden={activeModal ? true : undefined}
+    inert={activeModal ? true : undefined}
+  >
     <div className="ios-scroll-wrapper">
         {/* place the canvas absolutely and behind everything, and allow pointer events on it */}
-        <LiquidEther
-          className="absolute inset-0 z-0"
-          colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
-          mouseForce={30}
-          cursorSize={65}
-          isViscous={false}
-          viscous={15}
-          iterationsViscous={5}
-          iterationsPoisson={5}
-          resolution={0.2}
-          isBounce={false}
-          autoDemo={true}
-          autoSpeed={0.25}
-          autoIntensity={1.3}
-          takeoverDuration={0.25}
-          autoResumeDelay={3000}
-          autoRampDuration={0.6}
-        />
+        {enableRichMotion && (
+          <Suspense fallback={null}>
+            <LiquidEther
+              className="absolute inset-0 z-0"
+              colors={etherColors}
+              mouseForce={30}
+              cursorSize={65}
+              isViscous={false}
+              viscous={15}
+              iterationsViscous={5}
+              iterationsPoisson={5}
+              resolution={0.2}
+              isBounce={false}
+              autoDemo={true}
+              autoSpeed={0.25}
+              autoIntensity={1.3}
+              takeoverDuration={0.25}
+              autoResumeDelay={3000}
+              autoRampDuration={0.6}
+            />
+          </Suspense>
+        )}
         {/* Outer glass container: ignore pointer events so underlying canvas gets mouse moves */}
         {/* allow children descenders to show — don't clip */}
         <div className="absolute inset-2 z-10 group rounded-3xl border border-zinc-700/50 bg-zinc-800/40 backdrop-blur-sm overflow-visible md:overflow-hidden transition-all duration-300 hover:border-purple-500/20 pointer-events-auto md:pointer-events-none">
@@ -154,7 +227,7 @@ export default function App() {
               and allow the outer container to scroll vertically.
             - On larger screens the original grid layout is kept.
           */}
-          <div className="w-full h-full pointer-events-none px-2 pt-3 pb-2 min-h-0">
+          <div className="w-full h-auto md:h-full pointer-events-none px-2 pt-3 pb-2 min-h-0">
             {/* Grid:
                left and right columns are clamped between 140px and 220px,
                middle column grows to fill remaining space (1fr).
@@ -166,7 +239,7 @@ export default function App() {
                 the outer wrapper will scroll if content overflows.
             */}
             <div
-              className="md:grid grid-cols-1 md:grid-cols-[minmax(180px,320px)_1fr_minmax(120px,200px)] gap-2 h-full min-h-0 overflow-visible md:overflow-hidden"
+              className="md:grid grid-cols-1 md:grid-cols-[minmax(180px,320px)_1fr_minmax(120px,200px)] gap-2 h-auto md:h-full min-h-0 overflow-visible md:overflow-hidden"
               style={{
                 gridTemplateRows: "repeat(3, 1fr)",
               }}
@@ -178,20 +251,22 @@ export default function App() {
                     Hello, I'm
                   </div>
 
-                  <GradientText
-                    colors={[
-                      "#6d28d9",
-                      "#c084fc",
-                      "#6d28d9",
-                      "#c084fc",
-                      "#6d28d9",
-                    ]}
-                    animationSpeed={7}
-                    showBorder={false}
-                    className="text-4xl sm:text-5xl font-semibold leading-none block"
-                  >
-                    Ryan
-                  </GradientText>
+                  <h1>
+                    <GradientText
+                      colors={[
+                        "#6d28d9",
+                        "#c084fc",
+                        "#6d28d9",
+                        "#c084fc",
+                        "#6d28d9",
+                      ]}
+                      animationSpeed={7}
+                      showBorder={false}
+                      className="text-4xl sm:text-5xl font-semibold leading-none block"
+                    >
+                      Ryan
+                    </GradientText>
+                  </h1>
 
                   <div className="mt-2 text-white/70 text-sm tracking-wide">
                     <span className="block">Software</span>
@@ -204,16 +279,8 @@ export default function App() {
 
               <Card
                 className="pointer-events-auto cursor-pointer"
-                onClick={() => {
-                  setIsClosing(false);
-                  setActiveModal("contact");
-                }}
-                onKeyDown={(e: React.KeyboardEvent) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    setIsClosing(false);
-                    setActiveModal("contact");
-                  }
-                }}
+                onClick={(event) => openModal("contact", event.currentTarget)}
+                onKeyDown={(event) => handleModalKeyDown(event, "contact")}
                 role="button"
                 tabIndex={0}
                 aria-label="Open contact modal"
@@ -248,16 +315,8 @@ export default function App() {
               </Card>
               <Card
                 className="pointer-events-auto cursor-pointer"
-                onClick={() => {
-                  setIsClosing(false);
-                  setActiveModal("about");
-                }}
-                onKeyDown={(e: React.KeyboardEvent) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    setIsClosing(false);
-                    setActiveModal("about");
-                  }
-                }}
+                onClick={(event) => openModal("about", event.currentTarget)}
+                onKeyDown={(event) => handleModalKeyDown(event, "about")}
                 role="button"
                 tabIndex={0}
                 aria-label="Open about modal"
@@ -281,37 +340,26 @@ export default function App() {
                   </GradientText>
                   <div className="mt-2 w-full overflow-visible"></div>
                   <div className="w-full flex items-center justify-center mt-1">
-                    <button
-                      onClick={() => {
-                        setIsClosing(false);
-                        setActiveModal("about");
-                      }}
+                    <span
+                      aria-hidden="true"
                       className="inline-flex items-center justify-center px-4 py-2 rounded-2xl bg-white/6 backdrop-blur-md border border-zinc-700/40 text-white text-sm font-medium transition-transform duration-200 hover:bg-white/8"
                     >
                       More
-                    </button>
+                    </span>
                   </div>
                 </div>
               </Card>
               {/* Second Row — replace the previous col-span-2 + right tile with a full-row wrapper
                   that contains a nested 2-column grid using a 60% / 40% split. */}
-              <div className="col-span-3 pointer-events-none w-full h-full min-h-0">
+              <div className="col-span-3 pointer-events-none w-full h-auto md:h-full min-h-0">
                 <div
-                  className="grid gap-4 h-full grid-cols-1 md:grid-cols-[60%_40%]"
+                  className="grid gap-4 h-auto md:h-full grid-cols-1 md:grid-cols-[3fr_2fr]"
                 >
                   {/* Left (60%) */}
                   <Card
-                    className="pointer-events-auto h-full cursor-pointer"
-                    onClick={() => {
-                      setIsClosing(false);
-                      setActiveModal("projects");
-                    }}
-                    onKeyDown={(e: React.KeyboardEvent) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        setIsClosing(false);
-                        setActiveModal("projects");
-                      }
-                    }}
+                    className="pointer-events-auto cursor-pointer"
+                    onClick={(event) => openModal("projects", event.currentTarget)}
+                    onKeyDown={(event) => handleModalKeyDown(event, "projects")}
                     role="button"
                     tabIndex={0}
                     aria-label="Open projects modal"
@@ -346,7 +394,7 @@ export default function App() {
                   </Card>
 
                   {/* Stacks */}
-                  <Card className="pointer-events-auto h-full">
+                  <Card className="pointer-events-auto">
                     <div className="relative z-10 flex flex-col items-start justify-start h-full pt-2 gap-2">
                       <GradientText
                         colors={[
@@ -415,20 +463,9 @@ export default function App() {
                   </div>
                 </div>
               </Card>
-              {/* ensure card has no internal padding so Plasma fills it exactly */}
+              {/* Lightweight CSS motion card: no second WebGL renderer needed. */}
               <Card className="pointer-events-auto !p-0 !pb-0 relative overflow-hidden">
-                {/* Plasma fills the card, does not affect layout */}
-                <div className="absolute inset-0 w-full h-full pointer-events-auto">
-                  <Plasma
-                    className="w-full h-full"
-                    color="#c084fc"
-                    speed={0.6}
-                    direction="forward"
-                    scale={1}
-                    opacity={0.5}
-                    mouseInteractive={false}
-                  />
-                </div>
+                <div className="plasma-card-bg absolute inset-0 w-full h-full" />
               </Card>
 
               {/* CV Card */}
@@ -457,7 +494,7 @@ export default function App() {
                   <a
                     href="/Ryan-Tsai-CV.pdf"
                     download="RyanTsai-CV.pdf"
-                    className="mt-2 inline-flex items-center justify-center px-4 py-2 rounded-2xl bg-white/6 backdrop-blur-md border border-zinc-700/40 text-white text-sm font-medium transition-transform duration-200 hover:bg-white/8 hover:scale-105 text-center"
+                    className="mt-2 inline-flex min-h-11 items-center justify-center px-4 py-2 rounded-2xl bg-white/6 backdrop-blur-md border border-zinc-700/40 text-white text-sm font-medium transition-transform duration-200 hover:bg-white/8 hover:scale-105 text-center"
                     aria-label="Download CV"
                   >
                     Download CV
@@ -471,11 +508,21 @@ export default function App() {
   </div>
 
       {/* Modals - extracted to components to preserve identical markup and behaviour */}
-      <ProjectsModal
-        isOpen={activeModal === "projects"}
-        isClosing={isClosing}
-        onClose={handleCloseModal}
-      />
+      {activeModal === "projects" && (
+        <Suspense
+          fallback={
+            <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 text-white" role="status">
+              Loading projects…
+            </div>
+          }
+        >
+          <ProjectsModal
+            isOpen
+            isClosing={isClosing}
+            onClose={handleCloseModal}
+          />
+        </Suspense>
+      )}
       <ContactModal
         isOpen={activeModal === "contact"}
         isClosing={isClosing}

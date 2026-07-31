@@ -235,6 +235,7 @@ body,
     position: fixed;
     inset: 0;
     overflow-y: auto;
+    overscroll-behavior-y: contain;
     -webkit-overflow-scrolling: touch;
     z-index: 1;
   }
@@ -332,4 +333,95 @@ body,
 .project-carousel-slide {
   flex: 0 0 100%;
   height: 100%;
+}
+
+.logo-loop {
+  position: relative;
+  overflow: hidden;
+}
+
+.logo-loop__track,
+.logo-loop__track ul,
+.logo-loop__item,
+.logo-loop__item a,
+.logo-loop__item > span {
+  display: flex;
+  align-items: center;
+}
+
+.logo-loop__track {
+  width: max-content;
+  animation: logo-loop-scroll var(--logo-duration) linear infinite;
+  animation-direction: var(--logo-direction);
+}
+
+.logo-loop__track ul {
+  gap: var(--logo-gap);
+  padding-right: var(--logo-gap);
+}
+
+.logo-loop__item {
+  flex: none;
+  height: var(--logo-height);
+}
+
+.logo-loop__item a,
+.logo-loop__item > span {
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
+  border-radius: 0.25rem;
+  color: inherit;
+}
+
+.logo-loop__item img {
+  display: block;
+  width: auto;
+  height: var(--logo-height);
+  object-fit: contain;
+}
+
+.logo-loop__item--scale:hover {
+  transform: scale(1.15);
+}
+
+.logo-loop--pause:hover .logo-loop__track {
+  animation-play-state: paused;
+}
+
+.logo-loop--fade {
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+@keyframes logo-loop-scroll {
+  to {
+    transform: translateX(-33.333333%);
+  }
+}
+
+.plasma-card-bg {
+  background:
+    radial-gradient(circle at 20% 20%, rgb(192 132 252 / 35%), transparent 38%),
+    radial-gradient(circle at 80% 70%, rgb(109 40 217 / 30%), transparent 42%),
+    linear-gradient(135deg, rgb(9 9 11 / 80%), rgb(88 28 135 / 35%));
+  background-size: 160% 160%;
+  animation: plasma-shift 10s ease-in-out infinite alternate;
+}
+
+@keyframes plasma-shift {
+  to {
+    background-position: 100% 80%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gradient-text,
+  .plasma-card-bg,
+  .logo-loop__track {
+    animation: none !important;
+  }
+
+  .project-carousel-track {
+    transition: none;
+  }
 }

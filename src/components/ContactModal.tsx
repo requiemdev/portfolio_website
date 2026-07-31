@@ -18,7 +18,7 @@ export default function ContactModal({ isOpen, isClosing, onClose }: Props) {
       await navigator.clipboard.writeText(email);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (e) {
+    } catch {
       // fallback for unsupported environments
       const el = document.createElement("textarea");
       el.value = email;
@@ -41,23 +41,28 @@ export default function ContactModal({ isOpen, isClosing, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className={`bg-zinc-800/60 backdrop-blur-md rounded-3xl border border-zinc-700/50 max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 relative transition-all duration-500 ${
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="contact-title"
+        className={`bg-zinc-900/90 backdrop-blur-md rounded-3xl border border-zinc-700/50 max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 relative transition-all duration-300 ${
           isClosing
-            ? "animate-out slide-out-to-bottom-4 zoom-out-95 duration-500"
-            : "animate-in slide-in-from-bottom-4 zoom-in-95 duration-500"
+            ? "animate-out slide-out-to-bottom-4 zoom-out-95 duration-300"
+            : "animate-in slide-in-from-bottom-4 zoom-in-95 duration-300"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-violet-500/5 to-transparent rounded-3xl"></div>
         <div className="relative z-10">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl text-transparent bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text font-semibold">
+            <h2 id="contact-title" className="text-2xl text-transparent bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text font-semibold">
               Contact
             </h2>
             <button
+              type="button"
               onClick={onClose}
-              className="text-white/60 hover:text-white transition-colors text-2xl"
+              className="h-11 w-11 text-white/60 hover:text-white transition-colors text-2xl"
               aria-label="Close contact"
+              autoFocus
             >
               ✕
             </button>
@@ -71,7 +76,7 @@ export default function ContactModal({ isOpen, isClosing, onClose }: Props) {
                   href="https://www.linkedin.com/in/ryan-yun-tsai/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/90 hover:text-white"
+                  className="inline-flex min-h-11 items-center text-white/90 hover:text-white"
                 >
                   LinkedIn
                 </a>
@@ -83,7 +88,7 @@ export default function ContactModal({ isOpen, isClosing, onClose }: Props) {
                   href="https://github.com/requiemdev"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/90 hover:text-white"
+                  className="inline-flex min-h-11 items-center text-white/90 hover:text-white"
                 >
                   GitHub
                 </a>
@@ -96,14 +101,15 @@ export default function ContactModal({ isOpen, isClosing, onClose }: Props) {
                 <div className="text-white font-medium">{email}</div>
 
                 <button
+                  type="button"
                   onClick={copyEmail}
-                  className="mt-2 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl bg-white/6 backdrop-blur-md border border-zinc-700/40 text-white text-sm hover:bg-white/8 transition"
+                  className="mt-2 inline-flex min-h-11 items-center justify-center gap-2 px-4 py-2 rounded-2xl bg-white/6 backdrop-blur-md border border-zinc-700/40 text-white text-sm hover:bg-white/8 transition"
                 >
                   Copy Email
                 </button>
 
                 {copied && (
-                  <div className="text-sm text-green-400 mt-1">Copied!</div>
+                  <div className="text-sm text-green-400 mt-1" role="status">Copied!</div>
                 )}
               </div>
             </div>
