@@ -9,10 +9,8 @@ export default function AboutModal({ isOpen, isClosing, onClose }: Props) {
 
   return (
     <div
-      className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 transition-all duration-300 ${
-        isClosing
-          ? "animate-out fade-out duration-300"
-          : "animate-in fade-in duration-300"
+      className={`modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 ${
+        isClosing ? "is-closing" : "is-opening"
       }`}
       onClick={onClose}
     >
@@ -20,23 +18,21 @@ export default function AboutModal({ isOpen, isClosing, onClose }: Props) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="about-title"
-        className={`bg-zinc-900/90 backdrop-blur-md rounded-3xl border border-zinc-700/50 max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8 relative transition-all duration-300 ${
-          isClosing
-            ? "animate-out slide-out-to-bottom-4 zoom-out-95 duration-300"
-            : "animate-in slide-in-from-bottom-4 zoom-in-95 duration-300"
+        className={`modal-sheet bg-zinc-900/95 rounded-3xl border border-zinc-700/50 max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8 relative ${
+          isClosing ? "is-closing" : "is-opening"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-violet-500/5 to-transparent rounded-3xl"></div>
         <div className="relative z-10">
-          <div className="flex justify-between items-center mb-6">
+          <div className="modal-header flex justify-between items-center mb-6">
             <h2 id="about-title" className="text-2xl text-transparent bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text font-semibold">
               About Me
             </h2>
             <button
               type="button"
               onClick={onClose}
-              className="h-11 w-11 text-white/60 hover:text-white transition-colors text-2xl"
+              className="tactile-control close-control h-11 w-11 text-white/60 text-2xl"
               aria-label="Close about"
               autoFocus
             >

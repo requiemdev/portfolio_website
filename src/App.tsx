@@ -1,60 +1,44 @@
-import React, {
+import {
   lazy,
   Suspense,
   useCallback,
   useEffect,
   useRef,
   useState,
+  type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import Card from "./components/Card";
 import GradientText from "./components/GradientText";
 import LogoLoop from "./components/LogoLoop";
-import {
-  SiReact,
-  SiTypescript,
-  SiTailwindcss,
-  SiJavascript,
-  SiApachemaven,
-  SiJunit5,
-  SiPython,
-  SiFirebase,
-  SiCloudflare,
-  SiExpress,
-  SiNodedotjs,
-  SiGithub,
-  SiGit,
-} from "react-icons/si";
-import { DiJava } from "react-icons/di";
+import BrandMark from "./components/BrandMark";
 import ContactModal from "./components/ContactModal";
 import AboutModal from "./components/AboutModal";
 
-const LiquidEther = lazy(() => import("./components/LiquidEther"));
 const ProjectsModal = lazy(() => import("./components/ProjectsModal"));
 
 type ModalName = "projects" | "contact" | "about";
 
 // Logos for stack wheel (unified purple color to match gradient)
 const logoColorClass = "w-6 h-6 text-[#c084fc]";
-const etherColors = ["#5227FF", "#FF9FFC", "#B19EEF"];
 
 const langLogos = [
   {
-    node: <SiTypescript className={logoColorClass} />,
+    node: <BrandMark label="TS" className={logoColorClass} />,
     title: "TypeScript",
     href: "https://www.typescriptlang.org",
   },
   {
-    node: <SiJavascript className={logoColorClass} />,
+    node: <BrandMark label="JS" className={logoColorClass} />,
     title: "JavaScript",
     href: "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
   },
   {
-    node: <DiJava className={logoColorClass} />,
+    node: <BrandMark label="Jv" className={logoColorClass} />,
     title: "Java",
     href: "https://www.java.com",
   },
   {
-    node: <SiPython className={logoColorClass} />,
+    node: <BrandMark label="Py" className={logoColorClass} />,
     title: "Python",
     href: "https://www.python.org",
   },
@@ -62,54 +46,54 @@ const langLogos = [
 
 const techLogos = [
   {
-    node: <SiGithub className={logoColorClass} />,
+    node: <BrandMark label="GH" className={logoColorClass} />,
     title: "GitHub",
     href: "https://github.com",
   },
   {
-    node: <SiGit className={logoColorClass} />,
+    node: <BrandMark label="Git" className={logoColorClass} />,
     title: "Git",
     href: "https://git-scm.com",
   },
   {
-    node: <SiReact className={logoColorClass} />,
+    node: <BrandMark label="Rx" className={logoColorClass} />,
     title: "React",
     href: "https://react.dev",
   },
   {
-    node: <SiTailwindcss className={logoColorClass} />,
+    node: <BrandMark label="TW" className={logoColorClass} />,
     title: "Tailwind CSS",
     href: "https://tailwindcss.com",
   },
 
   {
-    node: <SiApachemaven className={logoColorClass} />,
+    node: <BrandMark label="Mvn" className={logoColorClass} />,
     title: "Maven",
     href: "https://maven.apache.org",
   },
   {
-    node: <SiJunit5 className={logoColorClass} />,
+    node: <BrandMark label="J5" className={logoColorClass} />,
     title: "JUnit 5",
     href: "https://junit.org/junit5",
   },
 
   {
-    node: <SiFirebase className={logoColorClass} />,
+    node: <BrandMark label="Fb" className={logoColorClass} />,
     title: "Firebase",
     href: "https://firebase.google.com",
   },
   {
-    node: <SiCloudflare className={logoColorClass} />,
+    node: <BrandMark label="CF" className={logoColorClass} />,
     title: "Cloudflare",
     href: "https://cloudflare.com",
   },
   {
-    node: <SiExpress className={logoColorClass} />,
+    node: <BrandMark label="Ex" className={logoColorClass} />,
     title: "Express",
     href: "https://expressjs.com",
   },
   {
-    node: <SiNodedotjs className={logoColorClass} />,
+    node: <BrandMark label="N" className={logoColorClass} />,
     title: "Node.js",
     href: "https://nodejs.org",
   },
@@ -118,20 +102,21 @@ const techLogos = [
 export default function App() {
   const [activeModal, setActiveModal] = useState<ModalName | null>(null);
   const [isClosing, setIsClosing] = useState(false);
-  const [enableRichMotion, setEnableRichMotion] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const closeTimeoutRef = useRef<number | null>(null);
   const modalTriggerRef = useRef<HTMLElement | null>(null);
+  const shouldRestoreFocusRef = useRef(false);
 
   const handleCloseModal = useCallback(() => {
     if (closeTimeoutRef.current !== null) return;
+    shouldRestoreFocusRef.current = true;
     setIsClosing(true);
     closeTimeoutRef.current = window.setTimeout(() => {
       setActiveModal(null);
       setIsClosing(false);
       closeTimeoutRef.current = null;
-      window.requestAnimationFrame(() => modalTriggerRef.current?.focus());
-    }, 300);
-  }, []);
+    }, prefersReducedMotion ? 0 : 300);
+  }, [prefersReducedMotion]);
 
   const openModal = (modal: ModalName, trigger: HTMLElement) => {
     modalTriggerRef.current = trigger;
@@ -140,7 +125,7 @@ export default function App() {
   };
 
   const handleModalKeyDown = (
-    event: React.KeyboardEvent<HTMLElement>,
+    event: ReactKeyboardEvent<HTMLElement>,
     modal: ModalName,
   ) => {
     if (event.key === "Enter" || event.key === " ") {
@@ -150,13 +135,15 @@ export default function App() {
   };
 
   useEffect(() => {
-    const motionQuery = window.matchMedia(
-      "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
+    const reducedMotionQuery = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
     );
-    const updateMotion = () => setEnableRichMotion(motionQuery.matches);
-    updateMotion();
-    motionQuery.addEventListener("change", updateMotion);
-    return () => motionQuery.removeEventListener("change", updateMotion);
+    const updateMotionPreference = () =>
+      setPrefersReducedMotion(reducedMotionQuery.matches);
+    updateMotionPreference();
+    reducedMotionQuery.addEventListener("change", updateMotionPreference);
+    return () =>
+      reducedMotionQuery.removeEventListener("change", updateMotionPreference);
   }, []);
 
   useEffect(() => {
@@ -175,6 +162,17 @@ export default function App() {
     };
   }, [activeModal, handleCloseModal]);
 
+  useEffect(() => {
+    if (activeModal || !shouldRestoreFocusRef.current) return;
+
+    shouldRestoreFocusRef.current = false;
+    const animationFrame = window.requestAnimationFrame(() => {
+      modalTriggerRef.current?.focus();
+    });
+
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [activeModal]);
+
   useEffect(
     () => () => {
       if (closeTimeoutRef.current !== null) {
@@ -186,38 +184,17 @@ export default function App() {
 
   return (
     <>
-  <div
+      <a className="skip-link" href="#main-content">
+        Skip to content
+      </a>
+  <main
+    id="main-content"
     className="relative min-h-screen md:h-screen bg-gradient-to-br from-slate-950 via-zinc-900 to-purple-950 p-1 flex md:items-center md:justify-center items-start justify-start overflow-hidden"
     aria-hidden={activeModal ? true : undefined}
     inert={activeModal ? true : undefined}
   >
     <div className="ios-scroll-wrapper">
-        {/* place the canvas absolutely and behind everything, and allow pointer events on it */}
-        {enableRichMotion && (
-          <Suspense fallback={null}>
-            <LiquidEther
-              className="absolute inset-0 z-0"
-              colors={etherColors}
-              mouseForce={30}
-              cursorSize={65}
-              isViscous={false}
-              viscous={15}
-              iterationsViscous={5}
-              iterationsPoisson={5}
-              resolution={0.2}
-              isBounce={false}
-              autoDemo={true}
-              autoSpeed={0.25}
-              autoIntensity={1.3}
-              takeoverDuration={0.25}
-              autoResumeDelay={3000}
-              autoRampDuration={0.6}
-            />
-          </Suspense>
-        )}
-        {/* Outer glass container: ignore pointer events so underlying canvas gets mouse moves */}
-        {/* allow children descenders to show — don't clip */}
-        <div className="absolute inset-2 z-10 group rounded-3xl border border-zinc-700/50 bg-zinc-800/40 backdrop-blur-sm overflow-visible md:overflow-hidden transition-all duration-300 hover:border-purple-500/20 pointer-events-auto md:pointer-events-none">
+        <div className="portfolio-frame absolute inset-2 z-10 group rounded-3xl border border-zinc-700/50 bg-zinc-800/40 backdrop-blur-sm overflow-visible md:overflow-hidden pointer-events-auto md:pointer-events-none">
           {/* Make this wrapper ignore pointer events so the canvas underneath receives all moves */}
           {/* add padding so first/last columns have equal spacing from the container */}
           {/* add extra top padding while keeping equal horizontal spacing */}
@@ -260,8 +237,6 @@ export default function App() {
                         "#c084fc",
                         "#6d28d9",
                       ]}
-                      animationSpeed={7}
-                      showBorder={false}
                       className="text-4xl sm:text-5xl font-semibold leading-none block"
                     >
                       Ryan
@@ -278,7 +253,7 @@ export default function App() {
               {/* Blank Card */}
 
               <Card
-                className="pointer-events-auto cursor-pointer"
+                className="interactive-card pointer-events-auto cursor-pointer"
                 onClick={(event) => openModal("contact", event.currentTarget)}
                 onKeyDown={(event) => handleModalKeyDown(event, "contact")}
                 role="button"
@@ -299,22 +274,20 @@ export default function App() {
                       "#c084fc",
                       "#6d28d9",
                     ]}
-                    animationSpeed={7}
-                    showBorder={false}
                     className="text-2xl sm:text-3xl font-semibold leading-none mb-0"
                   >
                     Contact
                   </GradientText>
 
                   <div className="mt-2">
-                    <span className="inline-flex items-center justify-center px-2 py-1 rounded-full bg-white/6 backdrop-blur-sm border border-white/10 text-s text-white/90 font-medium">
+                    <span className="glass-label inline-flex items-center justify-center px-2 py-1 rounded-full bg-white/6 backdrop-blur-sm border border-white/10 text-s text-white/90 font-medium">
                       Me
                     </span>
                   </div>
                 </div>
               </Card>
               <Card
-                className="pointer-events-auto cursor-pointer"
+                className="interactive-card pointer-events-auto cursor-pointer"
                 onClick={(event) => openModal("about", event.currentTarget)}
                 onKeyDown={(event) => handleModalKeyDown(event, "about")}
                 role="button"
@@ -331,8 +304,6 @@ export default function App() {
                       "#c084fc",
                       "#6d28d9",
                     ]}
-                    animationSpeed={7}
-                    showBorder={false}
                     /* give more bottom spacing so descenders (g, y, p) aren't overlapped */
                     className="text-2xl font-semibold leading-none mb-3"
                   >
@@ -342,7 +313,7 @@ export default function App() {
                   <div className="w-full flex items-center justify-center mt-1">
                     <span
                       aria-hidden="true"
-                      className="inline-flex items-center justify-center px-4 py-2 rounded-2xl bg-white/6 backdrop-blur-md border border-zinc-700/40 text-white text-sm font-medium transition-transform duration-200 hover:bg-white/8"
+                      className="glass-action inline-flex items-center justify-center px-4 py-2 rounded-2xl bg-white/6 backdrop-blur-md border border-zinc-700/40 text-white text-sm font-medium"
                     >
                       More
                     </span>
@@ -357,7 +328,7 @@ export default function App() {
                 >
                   {/* Left (60%) */}
                   <Card
-                    className="pointer-events-auto cursor-pointer"
+                    className="interactive-card pointer-events-auto cursor-pointer"
                     onClick={(event) => openModal("projects", event.currentTarget)}
                     onKeyDown={(event) => handleModalKeyDown(event, "projects")}
                     role="button"
@@ -365,7 +336,7 @@ export default function App() {
                     aria-label="Open projects modal"
                   >
                     <span className="absolute pointer-events-none shadow-md top-1/2 right-6 -translate-y-1/2">
-                      <span className="inline-flex items-center justify-center px-3 py-2 rounded-2xl bg-white/6 backdrop-blur-sm border border-white/10 text-sm md:text-base text-white/90 font-medium shadow-sm">
+                      <span className="glass-action inline-flex items-center justify-center px-3 py-2 rounded-2xl bg-white/6 backdrop-blur-sm border border-white/10 text-sm md:text-base text-white/90 font-medium shadow-sm">
                         View
                       </span>
                     </span>
@@ -382,8 +353,6 @@ export default function App() {
                           "#c084fc",
                           "#6d28d9",
                         ]}
-                        animationSpeed={7}
-                        showBorder={false}
                         className="text-3xl sm:text-4xl font-semibold leading-tight"
                       >
                         Projects
@@ -404,8 +373,6 @@ export default function App() {
                           "#c084fc",
                           "#6d28d9",
                         ]}
-                        animationSpeed={7}
-                        showBorder={false}
                         className="text-3xl font-semibold leading-none"
                       >
                         Stacks
@@ -413,14 +380,8 @@ export default function App() {
 
                       <LogoLoop
                         logos={techLogos}
-                        speed={25}
-                        direction="left"
                         logoHeight={55}
                         gap={40}
-                        pauseOnHover
-                        scaleOnHover={true}
-                        fadeOut={false}
-                        fadeOutColor="#000000ff"
                         ariaLabel="Stacks"
                       />
                     </div>
@@ -439,8 +400,6 @@ export default function App() {
                       "#c084fc",
                       "#6d28d9",
                     ]}
-                    animationSpeed={7}
-                    showBorder={false}
                     /* give more bottom spacing so descenders (g, y, p) aren't overlapped */
                     className="text-2xl sm:text-3xl font-semibold leading-none mb-3"
                   >
@@ -450,14 +409,8 @@ export default function App() {
                   <div className="mt-3 w-full overflow-visible">
                     <LogoLoop
                       logos={langLogos}
-                      speed={25}
-                      direction="left"
                       logoHeight={44}
                       gap={36}
-                      pauseOnHover
-                      scaleOnHover={true}
-                      fadeOut={false}
-                      fadeOutColor="#000000ff"
                       ariaLabel="Languages"
                     />
                   </div>
@@ -483,8 +436,6 @@ export default function App() {
                       "#c084fc",
                       "#6d28d9",
                     ]}
-                    animationSpeed={7}
-                    showBorder={false}
                     className="text-2xl sm:text-3xl font-semibold leading-none mb-0"
                   >
                     My CV
@@ -494,7 +445,7 @@ export default function App() {
                   <a
                     href="/Ryan-Tsai-CV.pdf"
                     download="RyanTsai-CV.pdf"
-                    className="mt-2 inline-flex min-h-11 items-center justify-center px-4 py-2 rounded-2xl bg-white/6 backdrop-blur-md border border-zinc-700/40 text-white text-sm font-medium transition-transform duration-200 hover:bg-white/8 hover:scale-105 text-center"
+                    className="tactile-control glass-action mt-2 inline-flex min-h-11 items-center justify-center px-4 py-2 rounded-2xl bg-white/6 backdrop-blur-md border border-zinc-700/40 text-white text-sm font-medium text-center"
                     aria-label="Download CV"
                   >
                     Download CV
@@ -505,7 +456,7 @@ export default function App() {
           </div>
         </div>
     </div>
-  </div>
+  </main>
 
       {/* Modals - extracted to components to preserve identical markup and behaviour */}
       {activeModal === "projects" && (
@@ -517,7 +468,6 @@ export default function App() {
           }
         >
           <ProjectsModal
-            isOpen
             isClosing={isClosing}
             onClose={handleCloseModal}
           />

@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import ferrousImg from "../images/ferrous.webp";
 import astralImagesImg from "../images/astral_images.webp";
 import astralBotImg from "../images/astral_bot.webp";
@@ -21,7 +21,6 @@ import tankArenaHardware from "../images/tank_arena_hardware.webp";
 import tankArenaTanks from "../images/tank_arena_tanks.webp";
 
 type Props = {
-  isOpen: boolean;
   isClosing: boolean;
   onClose: () => void;
 };
@@ -231,58 +230,30 @@ const projects: Project[] = [
 type ProjectCardProps = {
   project: Project;
   imageIndex: number;
-  isTrackAnimating: boolean;
   onPreviousImage: () => void;
   onNextImage: () => void;
-  onTrackTransitionEnd: () => void;
 };
 
 function ProjectCard({
   project,
   imageIndex,
-  isTrackAnimating,
   onPreviousImage,
   onNextImage,
-  onTrackTransitionEnd,
 }: ProjectCardProps) {
   const hasMultipleImages = project.images.length > 1;
-  const carouselImages = hasMultipleImages
-    ? [
-        project.images[project.images.length - 1],
-        ...project.images,
-        project.images[0],
-      ]
-    : project.images;
-  const activeDotIndex = hasMultipleImages
-    ? (imageIndex - 1 + project.images.length) % project.images.length
-    : 0;
+  const activeImage = project.images[imageIndex];
 
   return (
-    <div className="bg-zinc-700/40 backdrop-blur-md rounded-2xl border border-zinc-600/50 p-6 hover:border-purple-500/30 transition-all duration-300">
+    <article className="project-card bg-zinc-700/40 rounded-2xl border border-zinc-600/50 p-6">
       <div className="relative h-48 rounded-xl mb-4 overflow-hidden">
-        <div
-          className="project-carousel-track"
-          style={{
-            transform: `translateX(-${imageIndex * 100}%)`,
-            transition: isTrackAnimating ? undefined : "none",
-          }}
-          onTransitionEnd={onTrackTransitionEnd}
-        >
-          {carouselImages.map((image, trackIndex) => (
-            <div
-              key={`${image.src}-${trackIndex}`}
-              className="project-carousel-slide"
-            >
-              <img
-                src={image.src}
-                alt={image.alt}
-                className="w-full h-full object-cover rounded-xl"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-          ))}
-        </div>
+        <img
+          key={activeImage.src}
+          src={activeImage.src}
+          alt={activeImage.alt}
+          className="project-carousel-image w-full h-full object-cover rounded-xl"
+          loading="lazy"
+          decoding="async"
+        />
 
         {hasMultipleImages && (
           <>
@@ -290,27 +261,30 @@ function ProjectCard({
               <button
                 type="button"
                 onClick={onPreviousImage}
-                className="pointer-events-auto h-11 w-11 rounded-full bg-black/55 text-white hover:bg-black/70 transition-colors"
+                className="tactile-control carousel-control pointer-events-auto h-11 w-11 rounded-full bg-black/55 text-white"
                 aria-label={`Previous image for ${project.title}`}
               >
-                &lt;
+                ‹
               </button>
               <button
                 type="button"
                 onClick={onNextImage}
-                className="pointer-events-auto h-11 w-11 rounded-full bg-black/55 text-white hover:bg-black/70 transition-colors"
+                className="tactile-control carousel-control pointer-events-auto h-11 w-11 rounded-full bg-black/55 text-white"
                 aria-label={`Next image for ${project.title}`}
               >
-                &gt;
+                ›
               </button>
             </div>
 
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+            <div
+              className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5"
+              aria-hidden="true"
+            >
               {project.images.map((_, dotIndex) => (
                 <span
                   key={dotIndex}
                   className={`h-1.5 w-1.5 rounded-full ${
-                    dotIndex === activeDotIndex ? "bg-white/90" : "bg-white/40"
+                    dotIndex === imageIndex ? "bg-white/90" : "bg-white/40"
                   }`}
                 />
               ))}
@@ -338,7 +312,7 @@ function ProjectCard({
           href={project.github}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex min-h-11 items-center px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl hover:from-purple-600 hover:to-violet-600 transition-all"
+          className="tactile-control primary-action inline-flex min-h-11 items-center px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl"
         >
           GitHub
         </a>
@@ -347,141 +321,42 @@ function ProjectCard({
             href={project.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center px-4 py-2 bg-white/8 text-white rounded-xl border border-white/10 hover:bg-white/12 transition-colors"
+            className="tactile-control glass-action inline-flex min-h-11 items-center px-4 py-2 bg-white/8 text-white rounded-xl border border-white/10"
           >
             LinkedIn Post
           </a>
         )}
       </div>
-    </div>
+    </article>
   );
 }
 
-export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
+export default function ProjectsModal({ isClosing, onClose }: Props) {
   const [imageIndexes, setImageIndexes] = useState<Record<number, number>>({});
-  const [isTrackAnimating, setIsTrackAnimating] = useState<
-    Record<number, boolean>
-  >({});
-
-  const getInitialImageIndex = (projectIndex: number) =>
-    projects[projectIndex].images.length > 1 ? 1 : 0;
-
-  useEffect(() => {
-    if (!isOpen) {
-      return undefined;
-    }
-
-    const intervalId = window.setInterval(() => {
-      setImageIndexes((currentIndexes) => {
-        const nextIndexes: Record<number, number> = { ...currentIndexes };
-
-        projects.forEach((project, projectIndex) => {
-          if (project.images.length <= 1) {
-            return;
-          }
-
-          const currentImageIndex =
-            nextIndexes[projectIndex] ?? getInitialImageIndex(projectIndex);
-          
-          // Guard against incrementing past the buffer when tab is inactive
-          if (currentImageIndex < project.images.length + 1) {
-            nextIndexes[projectIndex] = currentImageIndex + 1;
-          }
-        });
-
-        return nextIndexes;
-      });
-
-      setIsTrackAnimating((prev) => {
-        const next = { ...prev };
-        projects.forEach((project, projectIndex) => {
-          if (project.images.length > 1) {
-            next[projectIndex] = true;
-          }
-        });
-        return next;
-      });
-    }, 5000);
-
-    return () => {
-      window.clearInterval(intervalId);
-    };
-  }, [isOpen]);
 
   const handlePreviousImage = (projectIndex: number) => {
-    const currentImageIndex = imageIndexes[projectIndex] ?? getInitialImageIndex(projectIndex);
-
-    if (currentImageIndex <= 0) return;
-
-    setIsTrackAnimating((currentState) => ({
-      ...currentState,
-      [projectIndex]: true,
-    }));
-
     setImageIndexes((currentIndexes) => ({
       ...currentIndexes,
-      [projectIndex]: (currentIndexes[projectIndex] ?? getInitialImageIndex(projectIndex)) - 1,
+      [projectIndex]:
+        ((currentIndexes[projectIndex] ?? 0) - 1 +
+          projects[projectIndex].images.length) %
+        projects[projectIndex].images.length,
     }));
   };
 
   const handleNextImage = (projectIndex: number) => {
-    const imageCount = projects[projectIndex].images.length;
-    const currentImageIndex = imageIndexes[projectIndex] ?? getInitialImageIndex(projectIndex);
-
-    if (currentImageIndex >= imageCount + 1) return;
-
-    setIsTrackAnimating((currentState) => ({
-      ...currentState,
-      [projectIndex]: true,
-    }));
-
     setImageIndexes((currentIndexes) => ({
       ...currentIndexes,
-      [projectIndex]: (currentIndexes[projectIndex] ?? getInitialImageIndex(projectIndex)) + 1,
+      [projectIndex]:
+        ((currentIndexes[projectIndex] ?? 0) + 1) %
+        projects[projectIndex].images.length,
     }));
   };
-
-  const handleTrackTransitionEnd = (projectIndex: number) => {
-    const imageCount = projects[projectIndex].images.length;
-
-    if (imageCount <= 1) {
-      return;
-    }
-
-    const currentImageIndex = imageIndexes[projectIndex] ?? getInitialImageIndex(projectIndex);
-
-    if (currentImageIndex !== 0 && currentImageIndex !== imageCount + 1) {
-      return;
-    }
-
-    setIsTrackAnimating((currentState) => ({
-      ...currentState,
-      [projectIndex]: false,
-    }));
-
-    setImageIndexes((currentIndexes) => ({
-      ...currentIndexes,
-      [projectIndex]: currentImageIndex === 0 ? imageCount : 1,
-    }));
-
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
-        setIsTrackAnimating((currentState) => ({
-          ...currentState,
-          [projectIndex]: true,
-        }));
-      });
-    });
-  };
-
-  if (!isOpen) return null;
 
   return (
     <div
-      className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 transition-all duration-300 ${
-        isClosing
-          ? "animate-out fade-out duration-300"
-          : "animate-in fade-in duration-300"
+      className={`modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 ${
+        isClosing ? "is-closing" : "is-opening"
       }`}
       onClick={onClose}
     >
@@ -489,23 +364,21 @@ export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="projects-title"
-        className={`bg-zinc-900/90 backdrop-blur-md rounded-3xl border border-zinc-700/50 max-w-7xl w-full max-h-[90vh] overflow-y-auto p-4 sm:p-8 relative transition-all duration-300 ${
-          isClosing
-            ? "animate-out slide-out-to-bottom-4 zoom-out-95 duration-300"
-            : "animate-in slide-in-from-bottom-4 zoom-in-95 duration-300"
+        className={`modal-sheet bg-zinc-900/95 rounded-3xl border border-zinc-700/50 max-w-7xl w-full max-h-[90vh] overflow-y-auto p-4 sm:p-8 relative ${
+          isClosing ? "is-closing" : "is-opening"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-violet-500/5 to-transparent rounded-3xl"></div>
         <div className="relative z-10">
-          <div className="flex justify-between items-center gap-3 mb-8">
+          <div className="modal-header flex justify-between items-center gap-3 mb-8">
             <h2 id="projects-title" className="text-2xl sm:text-3xl text-transparent bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text font-semibold">
               Featured Projects
             </h2>
             <button
               type="button"
               onClick={onClose}
-              className="h-11 w-11 shrink-0 text-white/60 hover:text-white transition-colors text-2xl"
+              className="tactile-control close-control h-11 w-11 shrink-0 text-white/60 text-2xl"
               aria-label="Close projects"
               autoFocus
             >
@@ -518,15 +391,9 @@ export default function ProjectsModal({ isOpen, isClosing, onClose }: Props) {
               <ProjectCard
                 key={project.title}
                 project={project}
-                imageIndex={
-                  imageIndexes[projectIndex] ?? getInitialImageIndex(projectIndex)
-                }
-                isTrackAnimating={isTrackAnimating[projectIndex] ?? true}
+                imageIndex={imageIndexes[projectIndex] ?? 0}
                 onPreviousImage={() => handlePreviousImage(projectIndex)}
                 onNextImage={() => handleNextImage(projectIndex)}
-                onTrackTransitionEnd={() =>
-                  handleTrackTransitionEnd(projectIndex)
-                }
               />
             ))}
           </div>

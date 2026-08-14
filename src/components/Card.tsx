@@ -1,7 +1,7 @@
-import React from "react";
+import type { HTMLAttributes, PropsWithChildren } from "react";
 
-type Props = React.PropsWithChildren<
-  React.HTMLAttributes<HTMLDivElement> & {
+type Props = PropsWithChildren<
+  HTMLAttributes<HTMLDivElement> & {
     className?: string;
   }
 >;
@@ -10,8 +10,7 @@ export default function Card({ children, className, ...props }: Props) {
   return (
     <div
       {...props}
-      /* add extra bottom space so descenders (g, y, p) never touch the edge */
-      className={`group relative w-full h-auto min-h-48 md:h-full md:min-h-0 min-w-0 mb-4 last:mb-0 md:mb-0 bg-zinc-800/40 backdrop-blur-md rounded-3xl border border-zinc-700/50 p-4 pb-6 flex flex-col justify-center overflow-visible transition-all duration-300 hover:border-purple-500/30 hover:shadow-lg hover:shadow-purple-500/10 ${
+      className={`portfolio-card group relative w-full h-auto min-h-48 md:h-full md:min-h-0 min-w-0 mb-4 last:mb-0 md:mb-0 bg-zinc-800/55 rounded-3xl border border-zinc-700/50 p-4 pb-6 flex flex-col justify-center overflow-visible ${
         className ?? ""
       }`}
     >

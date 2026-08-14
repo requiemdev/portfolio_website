@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SiLinkedin, SiGithub } from "react-icons/si";
+import BrandMark from "./BrandMark";
 
 type Props = {
   isOpen: boolean;
@@ -33,10 +33,8 @@ export default function ContactModal({ isOpen, isClosing, onClose }: Props) {
 
   return (
     <div
-      className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 transition-all duration-300 ${
-        isClosing
-          ? "animate-out fade-out duration-300"
-          : "animate-in fade-in duration-300"
+      className={`modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 ${
+        isClosing ? "is-closing" : "is-opening"
       }`}
       onClick={onClose}
     >
@@ -44,23 +42,21 @@ export default function ContactModal({ isOpen, isClosing, onClose }: Props) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="contact-title"
-        className={`bg-zinc-900/90 backdrop-blur-md rounded-3xl border border-zinc-700/50 max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 relative transition-all duration-300 ${
-          isClosing
-            ? "animate-out slide-out-to-bottom-4 zoom-out-95 duration-300"
-            : "animate-in slide-in-from-bottom-4 zoom-in-95 duration-300"
+        className={`modal-sheet bg-zinc-900/95 rounded-3xl border border-zinc-700/50 max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 relative ${
+          isClosing ? "is-closing" : "is-opening"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-violet-500/5 to-transparent rounded-3xl"></div>
         <div className="relative z-10">
-          <div className="flex justify-between items-center mb-4">
+          <div className="modal-header flex justify-between items-center mb-4">
             <h2 id="contact-title" className="text-2xl text-transparent bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text font-semibold">
               Contact
             </h2>
             <button
               type="button"
               onClick={onClose}
-              className="h-11 w-11 text-white/60 hover:text-white transition-colors text-2xl"
+              className="tactile-control close-control h-11 w-11 text-white/60 text-2xl"
               aria-label="Close contact"
               autoFocus
             >
@@ -71,24 +67,24 @@ export default function ContactModal({ isOpen, isClosing, onClose }: Props) {
           <div className="space-y-4">
             <div className="flex flex-col items-center gap-3">
               <div className="flex items-center gap-3">
-                <SiLinkedin className="w-6 h-6 text-[#c084fc]" />
+                <BrandMark label="in" className="w-6 h-6 text-[#c084fc]" />
                 <a
                   href="https://www.linkedin.com/in/ryan-yun-tsai/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center text-white/90 hover:text-white"
+                  className="tactile-control social-link inline-flex min-h-11 items-center text-white/90"
                 >
                   LinkedIn
                 </a>
               </div>
 
               <div className="flex items-center gap-3">
-                <SiGithub className="w-6 h-6 text-[#c084fc]" />
+                <BrandMark label="GH" className="w-6 h-6 text-[#c084fc]" />
                 <a
                   href="https://github.com/requiemdev"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center text-white/90 hover:text-white"
+                  className="tactile-control social-link inline-flex min-h-11 items-center text-white/90"
                 >
                   GitHub
                 </a>
@@ -103,7 +99,7 @@ export default function ContactModal({ isOpen, isClosing, onClose }: Props) {
                 <button
                   type="button"
                   onClick={copyEmail}
-                  className="mt-2 inline-flex min-h-11 items-center justify-center gap-2 px-4 py-2 rounded-2xl bg-white/6 backdrop-blur-md border border-zinc-700/40 text-white text-sm hover:bg-white/8 transition"
+                  className="tactile-control glass-action mt-2 inline-flex min-h-11 items-center justify-center gap-2 px-4 py-2 rounded-2xl bg-white/6 backdrop-blur-md border border-zinc-700/40 text-white text-sm"
                 >
                   Copy Email
                 </button>
