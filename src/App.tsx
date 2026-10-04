@@ -364,7 +364,7 @@ export default function App() {
 
                   {/* Stacks */}
                   <Card className="pointer-events-auto">
-                    <div className="relative z-10 flex flex-col items-start justify-start h-full pt-2 gap-2">
+                    <div className="relative z-10 flex flex-col items-start h-full pt-2 gap-2">
                       <GradientText
                         colors={[
                           "#6d28d9",
@@ -378,12 +378,14 @@ export default function App() {
                         Stacks
                       </GradientText>
 
-                      <LogoLoop
-                        logos={techLogos}
-                        logoHeight={55}
-                        gap={40}
-                        ariaLabel="Stacks"
-                      />
+                      <div className="flex flex-1 items-center w-full overflow-hidden">
+                        <LogoLoop
+                          logos={techLogos}
+                          logoHeight={55}
+                          gap={40}
+                          ariaLabel="Stacks"
+                        />
+                      </div>
                     </div>
                   </Card>
                 </div>
@@ -391,7 +393,7 @@ export default function App() {
               {/* Third row */}
               {/* Languages */}
               <Card className="pointer-events-auto">
-                <div className="relative z-10 flex flex-col items-start justify-start h-full pt-1 gap-2">
+                <div className="relative z-10 flex flex-col items-start h-full pt-1 gap-2">
                   <GradientText
                     colors={[
                       "#6d28d9",
@@ -405,8 +407,7 @@ export default function App() {
                   >
                     Languages
                   </GradientText>
-                  {/* move the LogoLoop a little lower and slightly reduce icon height */}
-                  <div className="mt-3 w-full overflow-visible">
+                  <div className="flex flex-1 items-center w-full overflow-hidden">
                     <LogoLoop
                       logos={langLogos}
                       logoHeight={44}
