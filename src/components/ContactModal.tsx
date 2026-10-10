@@ -46,10 +46,10 @@ export default function ContactModal({ isOpen, isClosing, onClose }: Props) {
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-violet-500/5 to-transparent rounded-3xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-400/10 via-slate-500/5 to-transparent rounded-3xl"></div>
         <div className="relative z-10">
           <div className="modal-header flex justify-between items-center mb-4">
-            <h2 id="contact-title" className="text-2xl text-transparent bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text font-semibold">
+            <h2 id="contact-title" className="text-2xl text-transparent bg-gradient-to-r from-slate-200 to-slate-400 bg-clip-text font-semibold">
               Contact
             </h2>
             <button

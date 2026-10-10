@@ -8,9 +8,9 @@ function FolderIcon() {
     <svg viewBox="0 0 64 52" className="folder-icon" aria-hidden="true">
       <path
         d="M4 8a6 6 0 0 1 6-6h14l6 6h24a6 6 0 0 1 6 6v30a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6z"
-        fill="#6d28d9"
+        fill="#475569"
       />
-      <rect x="4" y="14" width="56" height="36" rx="6" fill="#a78bfa" />
+      <rect x="4" y="14" width="56" height="36" rx="6" fill="#94a3b8" />
     </svg>
   );
 }
@@ -129,7 +129,7 @@ export default function Desktop() {
                 key={index}
                 className={`mx-auto grid h-6 w-6 place-items-center rounded-full ${
                   index + 1 === now.getDate()
-                    ? "bg-violet-500 font-semibold text-white"
+                    ? "bg-slate-500 font-semibold text-white"
                     : "text-white/80"
                 }`}
               >
@@ -144,7 +144,7 @@ export default function Desktop() {
         <h1 className="text-5xl font-semibold text-white sm:text-6xl">
           Hi! I'm Ryan
         </h1>
-        <p className="mt-4 max-w-md text-lg text-white/70">
+        <p className="mt-4 max-w-md text-lg font-medium text-white [text-shadow:0_1px_3px_rgb(0_0_0/0.9),0_0_16px_rgb(0_0_0/0.8)]">
           Software Engineering @ University of Auckland
         </p>
         <a

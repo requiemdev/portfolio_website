@@ -146,7 +146,7 @@ function ProjectDetails({
           rel="noopener noreferrer"
           className={`tactile-control inline-flex min-h-11 items-center px-4 py-2 text-white rounded-xl ${
             featured
-              ? "primary-action bg-gradient-to-r from-purple-600 to-violet-600"
+              ? "primary-action bg-gradient-to-r from-slate-500 to-slate-600"
               : "glass-action bg-white/8 border border-white/10"
           }`}
         >

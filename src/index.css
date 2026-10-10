@@ -48,7 +48,7 @@ a,
 }
 
 :where(a, button, [role="button"]):focus-visible {
-  outline: 3px solid rgb(192 132 252 / 80%);
+  outline: 3px solid rgb(203 213 225 / 80%);
   outline-offset: 3px;
   border-radius: 0.75rem;
 }
@@ -94,7 +94,7 @@ a,
 .primary-action {
   box-shadow:
     0 1px 0 rgb(255 255 255 / 18%) inset,
-    0 8px 20px rgb(124 58 237 / 18%);
+    0 8px 20px rgb(0 0 0 / 25%);
 }
 
 .close-control {
@@ -367,16 +367,11 @@ html {
   --dock-h: 5rem;
 }
 
-/* Colour lives in the content layer so the glass above has something to pick up. Static gradients: no filter, no animation. */
+/* The image lives in the content layer so the glass above has something to pick up. Static: no filter, no animation. */
 .wallpaper {
-  background:
-    radial-gradient(60% 50% at 15% 10%, rgb(59 130 246 / 22%), transparent 70%),
-    radial-gradient(50% 45% at 85% 80%, rgb(168 85 247 / 35%), transparent 70%),
-    radial-gradient(40% 40% at 60% 30%, rgb(236 72 153 / 10%), transparent 70%),
-    linear-gradient(135deg, #020617, #18181b 50%, #3b0764);
+  background: #09090b url("./images/background.webp") center / cover no-repeat;
 }
 
-/* Content layer: glass rim and sheen but no blur, since only the wallpaper sits behind. Real glass is reserved for the dock, sheets and media controls. */
 /* The columns are empty space between their items: let presses through to anything dragged underneath. */
 #desktop > * {
   pointer-events: none;
@@ -386,13 +381,14 @@ html {
   pointer-events: auto;
 }
 
+/* Content layer: glass rim and sheen but no blur, since only the wallpaper sits behind. Real glass is reserved for the dock, sheets and media controls. */
 .widget {
   cursor: grab;
   -webkit-user-select: none;
   user-select: none;
   padding: 1rem 1.125rem;
   border-radius: 1.5rem;
-  background: var(--glass-sheen), rgb(255 255 255 / 6%);
+  background: var(--glass-sheen), rgb(28 31 36 / 75%);
   box-shadow: var(--glass-rim);
 }
 
@@ -440,7 +436,7 @@ html {
 }
 
 .folder-page {
-  --page-bg: #1f1a29;
+  --page-bg: #1c1f24;
   margin-top: 1rem;
 }
 
