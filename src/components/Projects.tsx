@@ -14,44 +14,92 @@ function Carousel({
   project: Project;
   className: string;
 }) {
-  const [imageIndex, setImageIndex] = useState(0);
+  // dir is the last move: 1 sent the top card to the back, -1 brought the back card to the top
+  const [{ imageIndex, dir }, setStack] = useState({ imageIndex: 0, dir: 0 });
   const count = project.images.length;
-  const activeImage = project.images[imageIndex];
+  const move = (step: 1 | -1) =>
+    setStack({ imageIndex: (imageIndex + step + count) % count, dir: step });
 
   return (
-    <div className={`relative rounded-xl overflow-hidden ${className}`}>
-      <img
-        key={activeImage.src}
-        src={activeImage.src}
-        alt={activeImage.alt}
-        className="project-carousel-image w-full h-full object-cover rounded-xl"
-        loading="lazy"
-        decoding="async"
-      />
+    <div className={`relative ${className}`}>
+      {project.images.map((image, index) => {
+        // 0 is the top card; everything past the second card behind rests hidden under it
+        const position = (index - imageIndex + count) % count;
+        const shuffle =
+          dir === 1 && position === count - 1
+            ? "is-to-back"
+            : dir === -1 && position === 0
+              ? "is-to-front"
+              : "";
+        return (
+          <div
+            key={image.src}
+            className={`stack-card ${shuffle}`}
+            style={
+              {
+                "--d": Math.min(position, 2),
+                "--back": Math.min(count - 1, 2),
+                zIndex: count - position,
+              } as CSSProperties
+            }
+            aria-hidden={position !== 0}
+          >
+            <img
+              src={image.src}
+              alt={image.alt}
+              className="h-full w-full rounded-xl object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        );
+      })}
 
       {count > 1 && (
         <>
-          <div className="absolute inset-0 flex items-center justify-between p-2 pointer-events-none">
+          <div className="absolute inset-x-0 bottom-0 top-5 z-20 flex items-center justify-between p-2 pointer-events-none">
             <button
               type="button"
-              onClick={() => setImageIndex((imageIndex - 1 + count) % count)}
+              onClick={() => move(-1)}
               className="tactile-control carousel-control pointer-events-auto h-11 w-11 rounded-full text-white"
               aria-label={`Previous image for ${project.title}`}
             >
-              ‹
+              <svg
+                viewBox="0 0 24 24"
+                className="h-5 w-5"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.25"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="m15 5-7 7 7 7" />
+              </svg>
             </button>
             <button
               type="button"
-              onClick={() => setImageIndex((imageIndex + 1) % count)}
+              onClick={() => move(1)}
               className="tactile-control carousel-control pointer-events-auto h-11 w-11 rounded-full text-white"
               aria-label={`Next image for ${project.title}`}
             >
-              ›
+              <svg
+                viewBox="0 0 24 24"
+                className="h-5 w-5"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.25"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="m9 5 7 7-7 7" />
+              </svg>
             </button>
           </div>
 
           <div
-            className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5"
+            className="absolute bottom-2 left-1/2 z-20 -translate-x-1/2 flex gap-1.5"
             aria-hidden="true"
           >
             {project.images.map((_, dotIndex) => (
@@ -125,9 +173,9 @@ export default function Projects() {
 
   return (
     <section id="projects" aria-label="Projects">
-      {featured.map((project, index) => (
-        <FolderPage key={project.slug} id={project.slug!} index={index} tab={project.title}>
-          <div className="grid items-center gap-8 md:grid-cols-2">
+      {featured.map((project) => (
+        <FolderPage key={project.slug} id={project.slug!} tab={project.title}>
+          <div className="grid items-center gap-8 md:grid-cols-[3fr_2fr] lg:gap-12">
             <Carousel project={project} className="aspect-[4/3] max-h-[60svh]" />
             <div>
               <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-4">
@@ -139,7 +187,7 @@ export default function Projects() {
         </FolderPage>
       ))}
 
-      <FolderPage id="more" index={featured.length} tab="More">
+      <FolderPage id="more" tab="More">
         <h2 className="text-3xl sm:text-4xl font-semibold text-white mb-6">
           More Projects
         </h2>
@@ -162,16 +210,13 @@ export default function Projects() {
 
 function FolderPage({
   id,
-  index,
   tab,
   children,
 }: {
   id: string;
-  index: number;
   tab: string;
   children: ReactNode;
 }) {
-  const style = { "--i": index } as CSSProperties;
   const pageRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -188,11 +233,10 @@ function FolderPage({
   return (
     <>
       {/* scroll target is a static sibling: anchoring to an already-stuck sticky element doesn't scroll */}
-      <span id={id} className="folder-anchor" style={style} />
+      <span id={id} className="folder-anchor" />
       <div
         ref={pageRef}
         className={`folder-page ${isOpen ? "is-open" : ""}`}
-        style={style}
         // a page covered by the stack still counts as in view, so the browser won't reveal keyboard focus landing in it
         onFocus={(event) => {
           if (
@@ -207,7 +251,7 @@ function FolderPage({
           {tab}
         </a>
         <div className="folder-body">
-          <div className="mx-auto max-w-6xl">{children}</div>
+          <div className="mx-auto w-full max-w-7xl">{children}</div>
         </div>
       </div>
     </>

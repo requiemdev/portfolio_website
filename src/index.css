@@ -108,13 +108,12 @@ a,
 .carousel-control {
   display: inline-grid;
   place-items: center;
-  font-size: 1.75rem;
-  line-height: 1;
-  /* clear glass over media. Apple's dimming layer is 35%; 50% keeps the arrow at 3.9:1 over a white screenshot */
-  background: rgb(0 0 0 / 50%);
-  box-shadow: var(--glass-rim);
-  backdrop-filter: blur(12px) saturate(160%);
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  /* clear glass over media: the photo stays visible, blurred and darkened by the filter rather than hidden under a flat fill. Over a pure white image the arrow still gets about 4.9:1. */
+  background: var(--glass-sheen), rgb(0 0 0 / 20%);
+  box-shadow:
+    var(--glass-rim),
+    0 4px 14px rgb(0 0 0 / 25%);
+  backdrop-filter: blur(14px) saturate(180%) brightness(0.55);
 }
 
 .social-link {
@@ -136,7 +135,6 @@ a,
     var(--glass-rim),
     0 36px 100px rgb(0 0 0 / 52%);
   backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
   animation-duration: var(--motion-standard);
   animation-fill-mode: both;
   animation-timing-function: var(--ease-fluid);
@@ -180,12 +178,91 @@ a,
   }
 }
 
-.project-carousel-image {
-  animation: project-image-in 180ms ease-out;
+/* Image stack: cards behind the top one shrink toward their top edge and lift, so their edges peek above it. Transform and opacity only. */
+.stack-card {
+  --rest: translateY(calc(var(--d) * -0.6rem)) scale(calc(1 - var(--d) * 0.07));
+  --aside: translateX(55%) rotate(6deg);
+  position: absolute;
+  inset: 1.25rem 0 0;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 24px rgb(0 0 0 / 30%);
+  transform: var(--rest);
+  transform-origin: center top;
+  /* same length as the swing, so the cards behind finish shifting as the moved card lands */
+  transition: transform 520ms var(--ease-fluid);
+  will-change: transform;
 }
 
-@keyframes project-image-in {
-  from { opacity: 0.35; }
+/* dims the cards behind without a filter */
+.stack-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: black;
+  opacity: calc(var(--d) * 0.28);
+  transition: opacity 520ms var(--ease-fluid);
+  pointer-events: none;
+}
+
+/* shortcut: linear easing on the element, curves set per keyframe, because a shared curve would restart in every segment and stall the card mid-swing */
+.stack-card.is-to-back {
+  animation: card-to-back 520ms linear;
+}
+
+.stack-card.is-to-front {
+  animation: card-to-front 520ms linear;
+}
+
+/* One pendulum swing: the card decelerates out to the side, swaps depth at the turning point where it is momentarily still, then accelerates back in and settles. The missing end keyframe is the card's own resting transform. */
+@keyframes card-to-back {
+  0% {
+    transform: none;
+    z-index: 10;
+    animation-timing-function: cubic-bezier(0.3, 0, 0.5, 1);
+  }
+
+  50% {
+    transform: var(--aside);
+    z-index: 10;
+    animation-timing-function: step-start;
+  }
+
+  50.01% {
+    transform: var(--aside);
+    z-index: 0;
+    animation-timing-function: cubic-bezier(0.5, 0, 0.2, 1);
+  }
+}
+
+@keyframes card-to-front {
+  0% {
+    transform: translateY(calc(var(--back) * -0.6rem))
+      scale(calc(1 - var(--back) * 0.07));
+    z-index: 0;
+    animation-timing-function: cubic-bezier(0.3, 0, 0.5, 1);
+  }
+
+  50% {
+    transform: var(--aside);
+    z-index: 0;
+    animation-timing-function: step-start;
+  }
+
+  50.01% {
+    transform: var(--aside);
+    z-index: 10;
+    animation-timing-function: cubic-bezier(0.5, 0, 0.2, 1);
+  }
+
+  100% {
+    z-index: 10;
+  }
+}
+
+/* a card swinging aside must not widen the page; clip keeps sticky working, unlike hidden */
+#projects {
+  overflow-x: clip;
 }
 
 .modal-header {
@@ -216,7 +293,7 @@ a,
   }
 
   .carousel-control:hover {
-    background: rgb(0 0 0 / 68%);
+    background: var(--glass-sheen), rgb(0 0 0 / 38%);
   }
 }
 
@@ -320,7 +397,7 @@ html {
 }
 
 .folder-page {
-  --page-bg: color-mix(in oklab, #18181b, #581c87 calc(var(--i) * 5%));
+  --page-bg: #1f1a29;
   margin-top: 1rem;
 }
 
@@ -330,10 +407,14 @@ html {
   width: max-content;
   max-width: 100%;
   height: var(--tab-h);
-  padding: 0 1.25rem;
+  /* flush with the left screen edge; sits over the body's top border and shadow so tab and page read as one surface */
+  position: relative;
+  z-index: 1;
+  margin-bottom: -1px;
+  padding: 0 1.25rem 0 1rem;
   border: 1px solid rgb(255 255 255 / 10%);
-  border-bottom: 0;
-  border-radius: 0.875rem 0.875rem 0 0;
+  border-width: 1px 1px 0 0;
+  border-radius: 0 0.875rem 0 0;
   background: var(--page-bg);
   color: rgb(255 255 255 / 85%);
   font-size: 0.875rem;
@@ -341,7 +422,7 @@ html {
 }
 
 .folder-body {
-  padding: var(--tab-h) 1rem 3rem;
+  padding: 1.25rem 1rem 3rem;
   border-top: 1px solid rgb(255 255 255 / 10%);
   background: var(--page-bg);
   box-shadow: 0 -16px 40px rgb(0 0 0 / 35%);
@@ -349,19 +430,14 @@ html {
 
 /* Short windows keep the plain stacked layout, so a page never has to scroll inside itself there. */
 @media (min-width: 768px) and (min-height: 700px) {
-  /* Each page sticks one tab-height lower than the last, so earlier tabs stay visible as a stack. */
+  /* Every page sticks at the same spot with its tab in the same place, so each arriving folder slides up and fully covers the one before. */
   .folder-page {
     position: sticky;
-    top: calc(var(--dock-h) + var(--i) * var(--tab-h));
+    top: var(--dock-h);
     display: flex;
     flex-direction: column;
-    height: calc(100svh - var(--dock-h) - var(--i) * var(--tab-h));
+    height: calc(100svh - var(--dock-h));
     margin-top: 0;
-  }
-
-  /* Pull each later page up one tab-height, so its tab peeks in over the bottom of the page before it. */
-  .folder-page + .folder-anchor {
-    margin-top: calc(-1 * var(--tab-h));
   }
 
   /* Rest only on the desktop or a project; "always" stops a hard fling skipping projects. */
@@ -375,27 +451,34 @@ html {
     scroll-snap-stop: always;
   }
 
-  .folder-anchor {
-    scroll-margin-top: calc(var(--dock-h) + var(--i) * var(--tab-h));
-  }
-
-  /* tabs sit on separate rows once stacked, so they may overlap horizontally */
+  /* one fixed width, so a short title's tab still fully covers a longer one behind it */
   .folder-tab {
-    margin-left: calc(1.5rem + var(--i) * 9%);
+    width: 14rem;
+    padding-left: 2rem;
   }
 
   /* shortcut: a page taller than the viewport scrolls inside itself, since the next page would cover its overflow; revisit if project copy grows */
   .folder-body {
+    display: flex;
+    flex-direction: column;
     flex: 1;
     min-height: 0;
     overflow-y: auto;
     padding-inline: 2rem;
   }
 
+  /* auto margins centre the content in the leftover height, and unlike justify-content they collapse to 0 when it overflows, so the top stays reachable */
+  .folder-body > div {
+    margin-block: auto;
+  }
+
   /* The last page has nothing stacking over it, so it can grow and scroll with the document. */
   .folder-page:last-of-type {
     height: auto;
-    min-height: calc(100svh - var(--dock-h) - var(--i) * var(--tab-h));
+    min-height: calc(100svh - var(--dock-h));
+    /* A snap area taller than the viewport scrolls freely, so the last page doesn't bounce back to its top. */
+    scroll-snap-align: start;
+    scroll-margin-top: var(--dock-h);
   }
 
   .folder-page:last-of-type .folder-body {
@@ -420,7 +503,6 @@ html {
     var(--glass-rim),
     0 18px 50px rgb(0 0 0 / 45%);
   backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
 }
 
 /* One glass lens glides to the hovered or focused item; --lens-x is set from Dock.tsx. Transform and opacity only. */
@@ -517,6 +599,8 @@ html {
 @media (prefers-reduced-motion: reduce) {
   .folder,
   .folder-icon,
+  .stack-card,
+  .stack-card::after,
   .dock::before,
   .dock-item,
   .tactile-control,
@@ -544,13 +628,17 @@ html {
   .project-card,
   .carousel-control {
     backdrop-filter: none;
-    -webkit-backdrop-filter: none;
   }
 
   .dock,
   .widget,
   .project-card {
     background-color: rgb(39 39 42 / 96%);
+  }
+
+  /* without the darkening filter the arrow needs a solid dim behind it */
+  .carousel-control {
+    background: rgb(0 0 0 / 60%);
   }
 
   .modal-sheet {
