@@ -70,32 +70,37 @@ export default function App() {
     return () => window.cancelAnimationFrame(animationFrame);
   }, [activeModal]);
 
-  // A wheel notch is too short to leave a mandatory snap point, so the browser scrolls then yanks back. Page one stop per notch instead.
+  // A wheel notch is too short to leave a mandatory snap point, so the browser scrolls then yanks back. Each notch plays one full page change instead, eased like a trackpad swipe.
   useEffect(() => {
-    let lockedUntil = 0;
-    const pageOnWheel = (event: WheelEvent) => {
-      const target = event.target as Element;
-      const wheelDeltaY = (event as WheelEvent & { wheelDeltaY?: number })
-        .wheelDeltaY;
-      // shortcut: trackpads report pixel deltas with wheelDeltaY = -3 * deltaY, wheels report lines or 120-steps; Safari mice look like trackpads and keep native scrolling
-      const isMouseWheel =
-        event.deltaMode !== 0 ||
-        (wheelDeltaY !== undefined &&
-          wheelDeltaY % 120 === 0 &&
-          wheelDeltaY !== -3 * event.deltaY);
+    const root = document.documentElement;
+    let frame = 0;
+    let lastWheel = -Infinity;
+    let burstIsMouse = false;
+
+    const swipeOnWheel = (event: WheelEvent) => {
+      const el = event.target as Element;
+      // shortcut: no API tells a wheel from a trackpad, so judge each burst by its first event. A notch arrives alone and already several pixels (or in lines); a trackpad gesture starts at a pixel or two. Smooth-scrolling mouse drivers look like a trackpad and scroll natively.
+      // deltaMode must be read before deltaY, or Firefox reports lines as pixels
+      const lines = event.deltaMode !== 0;
+      if (event.timeStamp - lastWheel > 150) {
+        burstIsMouse = lines || Math.abs(event.deltaY) >= 4;
+      }
+      lastWheel = event.timeStamp;
       if (
-        !isMouseWheel ||
+        !burstIsMouse ||
         event.ctrlKey ||
         event.deltaY === 0 ||
-        !target.closest("main") ||
-        getComputedStyle(document.documentElement).scrollSnapType === "none"
+        !el.closest("main")
       ) {
         return;
       }
+      // notches during a swipe are swallowed, so a spin can't queue up pages
+      if (frame) return event.preventDefault();
+      if (getComputedStyle(root).scrollSnapType === "none") return;
 
       const down = event.deltaY > 0;
       // a page taller than the viewport scrolls inside itself first
-      const body = target.closest(".folder-body");
+      const body = el.closest(".folder-body");
       if (
         body &&
         (down
@@ -105,28 +110,48 @@ export default function App() {
         return;
       }
 
+      const from = window.scrollY;
       const stops = [
         ...document.querySelectorAll("#desktop, .folder-anchor"),
-      ];
-      const offsets = stops.map(
+      ].map(
         (stop) =>
-          stop.getBoundingClientRect().top -
+          stop.getBoundingClientRect().top +
+          from -
           parseFloat(getComputedStyle(stop).scrollMarginTop),
       );
-      const next = down
-        ? offsets.findIndex((offset) => offset > 1)
-        : offsets.map((offset) => offset < -1).lastIndexOf(true);
+      const to = down
+        ? stops.find((stop) => stop > from + 1)
+        : stops.filter((stop) => stop < from - 1).pop();
       // no stop that way, or partway down the last page, which scrolls with the document
-      if (next === -1 || (!down && next === stops.length - 1)) return;
+      if (to === undefined || (!down && to === stops[stops.length - 1])) return;
 
       event.preventDefault();
-      if (event.timeStamp < lockedUntil) return;
-      lockedUntil = event.timeStamp + 500;
-      stops[next].scrollIntoView();
+      // snapping would pull every frame of the swipe onto a stop
+      root.style.scrollSnapType = "none";
+      const start = performance.now();
+      const tick = (now: number) => {
+        // a frame's timestamp can predate start, which would nudge the page backwards first
+        const t = Math.min(Math.max(now - start, 0) / 800, 1);
+        window.scrollTo({
+          top: from + (to - from) * (1 - (1 - t) ** 4),
+          behavior: "instant",
+        });
+        if (t < 1) {
+          frame = requestAnimationFrame(tick);
+        } else {
+          frame = 0;
+          root.style.scrollSnapType = "";
+        }
+      };
+      frame = requestAnimationFrame(tick);
     };
 
-    window.addEventListener("wheel", pageOnWheel, { passive: false });
-    return () => window.removeEventListener("wheel", pageOnWheel);
+    window.addEventListener("wheel", swipeOnWheel, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", swipeOnWheel);
+      cancelAnimationFrame(frame);
+      root.style.scrollSnapType = "";
+    };
   }, []);
 
   useEffect(
