@@ -70,6 +70,65 @@ export default function App() {
     return () => window.cancelAnimationFrame(animationFrame);
   }, [activeModal]);
 
+  // A wheel notch is too short to leave a mandatory snap point, so the browser scrolls then yanks back. Page one stop per notch instead.
+  useEffect(() => {
+    let lockedUntil = 0;
+    const pageOnWheel = (event: WheelEvent) => {
+      const target = event.target as Element;
+      const wheelDeltaY = (event as WheelEvent & { wheelDeltaY?: number })
+        .wheelDeltaY;
+      // shortcut: trackpads report pixel deltas with wheelDeltaY = -3 * deltaY, wheels report lines or 120-steps; Safari mice look like trackpads and keep native scrolling
+      const isMouseWheel =
+        event.deltaMode !== 0 ||
+        (wheelDeltaY !== undefined &&
+          wheelDeltaY % 120 === 0 &&
+          wheelDeltaY !== -3 * event.deltaY);
+      if (
+        !isMouseWheel ||
+        event.ctrlKey ||
+        event.deltaY === 0 ||
+        !target.closest("main") ||
+        getComputedStyle(document.documentElement).scrollSnapType === "none"
+      ) {
+        return;
+      }
+
+      const down = event.deltaY > 0;
+      // a page taller than the viewport scrolls inside itself first
+      const body = target.closest(".folder-body");
+      if (
+        body &&
+        (down
+          ? body.scrollTop + body.clientHeight < body.scrollHeight - 1
+          : body.scrollTop > 0)
+      ) {
+        return;
+      }
+
+      const stops = [
+        ...document.querySelectorAll("#desktop, .folder-anchor"),
+      ];
+      const offsets = stops.map(
+        (stop) =>
+          stop.getBoundingClientRect().top -
+          parseFloat(getComputedStyle(stop).scrollMarginTop),
+      );
+      const next = down
+        ? offsets.findIndex((offset) => offset > 1)
+        : offsets.map((offset) => offset < -1).lastIndexOf(true);
+      // no stop that way, or partway down the last page, which scrolls with the document
+      if (next === -1 || (!down && next === stops.length - 1)) return;
+
+      event.preventDefault();
+      if (event.timeStamp < lockedUntil) return;
+      lockedUntil = event.timeStamp + 500;
+      stops[next].scrollIntoView();
+    };
+
+    window.addEventListener("wheel", pageOnWheel, { passive: false });
+    return () => window.removeEventListener("wheel", pageOnWheel);
+  }, []);
+
   useEffect(
     () => () => {
       if (closeTimeoutRef.current !== null) {
