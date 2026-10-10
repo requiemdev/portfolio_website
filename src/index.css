@@ -401,6 +401,12 @@ html {
   margin-top: 1rem;
 }
 
+/* Stacked layout has no page behind the tab row, so paint it: the wallpaper must not show between folders. */
+.folder-page:not(:first-of-type) {
+  margin-top: 0;
+  background: var(--page-bg);
+}
+
 .folder-tab {
   display: flex;
   align-items: center;
