@@ -1,5 +1,4 @@
 import { useState } from "react";
-import BrandMark from "./BrandMark";
 
 type Props = {
   isOpen: boolean;
@@ -33,7 +32,7 @@ export default function ContactModal({ isOpen, isClosing, onClose }: Props) {
 
   return (
     <div
-      className={`modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 ${
+      className={`modal-backdrop fixed inset-0 bg-black/45 z-50 flex items-center justify-center p-2 ${
         isClosing ? "is-closing" : "is-opening"
       }`}
       onClick={onClose}
@@ -42,7 +41,7 @@ export default function ContactModal({ isOpen, isClosing, onClose }: Props) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="contact-title"
-        className={`modal-sheet bg-zinc-900/95 rounded-3xl border border-zinc-700/50 max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 relative ${
+        className={`modal-sheet rounded-3xl border border-zinc-700/50 max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 relative ${
           isClosing ? "is-closing" : "is-opening"
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -66,40 +65,19 @@ export default function ContactModal({ isOpen, isClosing, onClose }: Props) {
 
           <div className="space-y-4">
             <div className="flex flex-col items-center gap-3">
-              <div className="flex items-center gap-3">
-                <BrandMark label="in" className="w-6 h-6 text-[#c084fc]" />
-                <a
-                  href="https://www.linkedin.com/in/ryan-yun-tsai/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="tactile-control social-link inline-flex min-h-11 items-center text-white/90"
-                >
-                  LinkedIn
-                </a>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <BrandMark label="GH" className="w-6 h-6 text-[#c084fc]" />
-                <a
-                  href="https://github.com/requiemdev"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="tactile-control social-link inline-flex min-h-11 items-center text-white/90"
-                >
-                  GitHub
-                </a>
-              </div>
-
-              <div className="pt-2 border-t border-zinc-700/30 w-full" />
-
               <div className="w-full flex flex-col items-center gap-2">
                 <div className="text-sm text-white/70">Email</div>
-                <div className="text-white font-medium">{email}</div>
+                <a
+                  href={`mailto:${email}`}
+                  className="tactile-control social-link inline-flex min-h-11 items-center text-white font-medium underline underline-offset-4"
+                >
+                  {email}
+                </a>
 
                 <button
                   type="button"
                   onClick={copyEmail}
-                  className="tactile-control glass-action mt-2 inline-flex min-h-11 items-center justify-center gap-2 px-4 py-2 rounded-2xl bg-white/6 backdrop-blur-md border border-zinc-700/40 text-white text-sm"
+                  className="tactile-control glass-action mt-2 inline-flex min-h-11 items-center justify-center gap-2 px-4 py-2 rounded-2xl bg-white/6 border border-zinc-700/40 text-white text-sm"
                 >
                   Copy Email
                 </button>

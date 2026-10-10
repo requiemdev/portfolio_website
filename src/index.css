@@ -6,6 +6,12 @@
   --ease-press: cubic-bezier(0.2, 0.8, 0.2, 1);
   --motion-quick: 120ms;
   --motion-standard: 300ms;
+  /* specular edge shared by every glass surface: bright top lip, faint full rim */
+  --glass-rim:
+    0 1px 0 rgb(255 255 255 / 24%) inset,
+    0 0 0 0.5px rgb(255 255 255 / 12%) inset,
+    0 -1px 0 rgb(255 255 255 / 5%) inset;
+  --glass-sheen: linear-gradient(rgb(255 255 255 / 9%), rgb(255 255 255 / 0%) 55%);
 }
 
 html {
@@ -66,42 +72,6 @@ a,
   transform: translateY(0);
 }
 
-.portfolio-frame {
-  box-shadow:
-    0 1px 0 rgb(255 255 255 / 7%) inset,
-    0 28px 80px rgb(0 0 0 / 28%);
-  backdrop-filter: blur(18px) saturate(135%);
-  -webkit-backdrop-filter: blur(18px) saturate(135%);
-}
-
-.portfolio-card {
-  box-shadow:
-    0 1px 0 rgb(255 255 255 / 5%) inset,
-    0 12px 28px rgb(0 0 0 / 12%);
-  transition:
-    transform var(--motion-standard) var(--ease-fluid),
-    border-color var(--motion-standard) ease-out,
-    background-color var(--motion-standard) ease-out,
-    box-shadow var(--motion-standard) ease-out;
-}
-
-.interactive-card {
-  cursor: pointer;
-  transform: translateZ(0);
-}
-
-.interactive-card:active {
-  transform: scale(0.985);
-  transition-duration: var(--motion-quick);
-}
-
-.interactive-card .glass-action {
-  transition:
-    transform var(--motion-standard) var(--ease-fluid),
-    background-color var(--motion-standard) ease-out,
-    border-color var(--motion-standard) ease-out;
-}
-
 .glass-label,
 .glass-action {
   box-shadow: 0 1px 0 rgb(255 255 255 / 7%) inset;
@@ -140,6 +110,11 @@ a,
   place-items: center;
   font-size: 1.75rem;
   line-height: 1;
+  /* clear glass over media. Apple's dimming layer is 35%; 50% keeps the arrow at 3.9:1 over a white screenshot */
+  background: rgb(0 0 0 / 50%);
+  box-shadow: var(--glass-rim);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
 }
 
 .social-link {
@@ -156,9 +131,12 @@ a,
 }
 
 .modal-sheet {
+  background: var(--glass-sheen), rgb(24 24 27 / 72%);
   box-shadow:
-    0 1px 0 rgb(255 255 255 / 10%) inset,
+    var(--glass-rim),
     0 36px 100px rgb(0 0 0 / 52%);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
   animation-duration: var(--motion-standard);
   animation-fill-mode: both;
   animation-timing-function: var(--ease-fluid);
@@ -222,20 +200,6 @@ a,
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .interactive-card:hover {
-    border-color: rgb(168 85 247 / 36%);
-    box-shadow:
-      0 1px 0 rgb(255 255 255 / 7%) inset,
-      0 18px 42px rgb(124 58 237 / 12%);
-    transform: translateY(-2px);
-  }
-
-  .interactive-card:hover .glass-action {
-    border-color: rgb(255 255 255 / 17%);
-    background: rgb(255 255 255 / 9%);
-    transform: translateY(-1px);
-  }
-
   .tactile-control:hover,
   .social-link:hover {
     color: white;
@@ -252,180 +216,309 @@ a,
   }
 
   .carousel-control:hover {
-    background: rgb(0 0 0 / 72%);
+    background: rgb(0 0 0 / 68%);
   }
 }
 
-/* Ensure the app fills the entire viewport so Tailwind bg (h-screen / min-h-screen) covers the whole window */
-html,
-body,
-#root {
-  height: 100%;
-  margin: 0;
-}
-
-/* If React root renders an extra wrapper div, make it fill the viewport too */
-#root > div {
-  min-height: 100vh;
-}
-
-/* Mobile: allow the main wrapper to grow taller than the viewport and become scrollable */
-@media (max-width: 767px) {
-  /* make sure the main app area isn't forced to a fixed viewport height */
-  .relative.h-screen {
-    min-height: 100vh;
-    height: auto;
-  }
-
-  /* ensure any internal grid rows can grow naturally */
-  .grid > * {
-    height: auto !important;
-    min-height: 0 !important;
-  }
-
-  /* reduce large paddings on very small screens */
-  .px-2 {
-    padding-left: 0.5rem !important;
-    padding-right: 0.5rem !important;
-  }
-
-  /* Enable native momentum (smooth) scrolling on iOS for the main scroll container */
-  .relative.min-h-screen,
-  .mobile-scroll {
-    -webkit-overflow-scrolling: touch;
-    overflow-y: auto;
-  }
-
-  /* iOS scroll wrapper: fixed container on small screens that becomes the only scroll surface */
-  .ios-scroll-wrapper {
-    position: fixed;
-    inset: 0;
-    overflow-y: auto;
-    overscroll-behavior-y: contain;
-    -webkit-overflow-scrolling: touch;
-    z-index: 1;
-  }
-
-  /* Prevent document/body from scrolling on mobile - only ios-scroll-wrapper scrolls */
-  html,
-  body {
-    height: 100%;
-    overflow: hidden;
-    position: fixed;
-    width: 100%;
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
   }
 }
 
-@media (min-width: 768px) {
-  /* Restore normal flow on desktop */
-  .ios-scroll-wrapper {
-    position: static;
-    inset: auto;
-    overflow: visible;
+html {
+  background: #09090b;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
   }
 
-  html,
-  body {
-    position: static;
-    overflow: auto;
+  /* The desktop assembles once on load: opacity and transform only, so it stays on the compositor. */
+  #desktop > *,
+  .dock {
+    animation: rise-in 600ms var(--ease-fluid) both;
+  }
+
+  #desktop > :nth-child(2) {
+    animation-delay: 80ms;
+  }
+
+  #desktop > :nth-child(3) {
+    animation-delay: 160ms;
+  }
+
+  .dock {
+    animation-delay: 240ms;
+  }
+
+  /* Content springs up past its resting place and settles as a page arrives. */
+  .folder-body > div {
+    transform: translateY(3rem);
+    transition: transform 650ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .folder-page.is-open .folder-body > div {
+    transform: none;
   }
 }
 
-.logo-loop {
-  position: relative;
-  overflow: hidden;
-  contain: layout paint;
+:root {
+  --tab-h: 2.25rem;
+  /* space the docked navbar occupies at the top: 0.75rem offset + dock + gap */
+  --dock-h: 5rem;
 }
 
-.brand-mark {
-  display: inline-flex;
+/* Colour lives in the content layer so the glass above has something to pick up. Static gradients: no filter, no animation. */
+.wallpaper {
+  background:
+    radial-gradient(60% 50% at 15% 10%, rgb(59 130 246 / 22%), transparent 70%),
+    radial-gradient(50% 45% at 85% 80%, rgb(168 85 247 / 35%), transparent 70%),
+    radial-gradient(40% 40% at 60% 30%, rgb(236 72 153 / 10%), transparent 70%),
+    linear-gradient(135deg, #020617, #18181b 50%, #3b0764);
+}
+
+/* Content layer: glass rim and sheen but no blur, since only the wallpaper sits behind. Real glass is reserved for the dock, sheets and media controls. */
+.widget {
+  padding: 1rem 1.125rem;
+  border-radius: 1.5rem;
+  background: var(--glass-sheen), rgb(255 255 255 / 6%);
+  box-shadow: var(--glass-rim);
+}
+
+.folder {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-  font-size: 0.95rem;
-  font-weight: 800;
-  letter-spacing: -0.04em;
+  gap: 0.375rem;
+  padding: 0.625rem 0.25rem;
+  border-radius: 0.875rem;
+  color: white;
+  font-size: 0.8125rem;
+  line-height: 1.25;
+  text-align: center;
+  transition:
+    background-color 180ms ease-out,
+    transform var(--motion-quick) var(--ease-press);
 }
 
-.logo-loop__track,
-.logo-loop__track ul,
-.logo-loop__item,
-.logo-loop__item a,
-.logo-loop__item > span {
+.folder:active {
+  transform: scale(0.96);
+}
+
+.folder-icon {
+  width: 3.5rem;
+  transition: transform var(--motion-standard) var(--ease-fluid);
+  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 35%));
+}
+
+.folder-anchor {
+  display: block;
+  scroll-margin-top: var(--dock-h);
+}
+
+.folder-page {
+  --page-bg: color-mix(in oklab, #18181b, #581c87 calc(var(--i) * 5%));
+  margin-top: 1rem;
+}
+
+.folder-tab {
   display: flex;
   align-items: center;
-}
-
-.logo-loop__track {
   width: max-content;
-  animation: logo-loop-scroll var(--logo-duration) linear infinite;
+  max-width: 100%;
+  height: var(--tab-h);
+  padding: 0 1.25rem;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-bottom: 0;
+  border-radius: 0.875rem 0.875rem 0 0;
+  background: var(--page-bg);
+  color: rgb(255 255 255 / 85%);
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 
-.logo-loop__track ul {
-  gap: var(--logo-gap);
-  padding-right: var(--logo-gap);
+.folder-body {
+  padding: var(--tab-h) 1rem 3rem;
+  border-top: 1px solid rgb(255 255 255 / 10%);
+  background: var(--page-bg);
+  box-shadow: 0 -16px 40px rgb(0 0 0 / 35%);
 }
 
-.logo-loop__item {
-  flex: none;
-  height: var(--logo-height);
-}
+/* Short windows keep the plain stacked layout, so a page never has to scroll inside itself there. */
+@media (min-width: 768px) and (min-height: 700px) {
+  /* Each page sticks one tab-height lower than the last, so earlier tabs stay visible as a stack. */
+  .folder-page {
+    position: sticky;
+    top: calc(var(--dock-h) + var(--i) * var(--tab-h));
+    display: flex;
+    flex-direction: column;
+    height: calc(100svh - var(--dock-h) - var(--i) * var(--tab-h));
+    margin-top: 0;
+  }
 
-.logo-loop__item a,
-.logo-loop__item > span {
-  min-width: 44px;
-  min-height: 44px;
-  justify-content: center;
-  border-radius: 0.25rem;
-  color: inherit;
-}
+  /* Pull each later page up one tab-height, so its tab peeks in over the bottom of the page before it. */
+  .folder-page + .folder-anchor {
+    margin-top: calc(-1 * var(--tab-h));
+  }
 
-.logo-loop__item--scale:hover {
-  transform: scale(1.15);
-}
+  /* Rest only on the desktop or a project; "always" stops a hard fling skipping projects. */
+  html {
+    scroll-snap-type: y mandatory;
+  }
 
-.logo-loop--pause:hover .logo-loop__track {
-  animation-play-state: paused;
-}
+  #desktop,
+  .folder-anchor {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
 
-.logo-loop--pause:focus-within .logo-loop__track {
-  animation-play-state: paused;
-}
+  .folder-anchor {
+    scroll-margin-top: calc(var(--dock-h) + var(--i) * var(--tab-h));
+  }
 
-@keyframes logo-loop-scroll {
-  to {
-    transform: translateX(-33.333333%);
+  /* tabs sit on separate rows once stacked, so they may overlap horizontally */
+  .folder-tab {
+    margin-left: calc(1.5rem + var(--i) * 9%);
+  }
+
+  /* shortcut: a page taller than the viewport scrolls inside itself, since the next page would cover its overflow; revisit if project copy grows */
+  .folder-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-inline: 2rem;
+  }
+
+  /* The last page has nothing stacking over it, so it can grow and scroll with the document. */
+  .folder-page:last-of-type {
+    height: auto;
+    min-height: calc(100svh - var(--dock-h) - var(--i) * var(--tab-h));
+  }
+
+  .folder-page:last-of-type .folder-body {
+    overflow: visible;
   }
 }
 
-.plasma-card-bg {
-  background:
-    radial-gradient(circle at 20% 20%, rgb(192 132 252 / 35%), transparent 38%),
-    radial-gradient(circle at 80% 70%, rgb(109 40 217 / 30%), transparent 42%),
-    linear-gradient(135deg, rgb(9 9 11 / 80%), rgb(88 28 135 / 35%));
-  background-size: 160% 160%;
-  animation: plasma-shift 10s ease-in-out infinite alternate;
+/* In flow at the bottom of the desktop (pulled up over it), then sticks to the top like a navbar. */
+.dock {
+  position: sticky;
+  top: max(0.75rem, env(safe-area-inset-top));
+  z-index: 40;
+  display: flex;
+  width: fit-content;
+  margin: -6.25rem auto 2.5rem;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.375rem;
+  border-radius: 1.5rem;
+  background: var(--glass-sheen), rgb(24 24 27 / 62%);
+  box-shadow:
+    var(--glass-rim),
+    0 18px 50px rgb(0 0 0 / 45%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
 }
 
-@keyframes plasma-shift {
-  to {
-    background-position: 100% 80%;
+/* One glass lens glides to the hovered or focused item; --lens-x is set from Dock.tsx. Transform and opacity only. */
+.dock::before {
+  content: "";
+  position: absolute;
+  top: 0.375rem;
+  left: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 1rem;
+  background: rgb(255 255 255 / 14%);
+  box-shadow: var(--glass-rim);
+  opacity: 0;
+  transform: translateX(var(--lens-x, 0.375rem));
+  transition:
+    transform var(--motion-standard) var(--ease-fluid),
+    opacity 180ms ease-out;
+  pointer-events: none;
+}
+
+.dock:has(.dock-item:focus-visible)::before {
+  opacity: 1;
+}
+
+.dock-item {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 1rem;
+  color: rgb(255 255 255 / 85%);
+  cursor: pointer;
+  transition:
+    transform var(--motion-standard) var(--ease-fluid),
+    background-color 180ms ease-out,
+    color 180ms ease-out;
+}
+
+.dock-item:active {
+  transform: scale(0.94);
+  transition-duration: var(--motion-quick);
+}
+
+.dock-label {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  padding: 0.25rem 0.625rem;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 0.5rem;
+  background: rgb(24 24 27 / 96%);
+  color: white;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease-out;
+}
+
+.dock-item:focus-visible .dock-label {
+  opacity: 1;
+}
+
+.dock-separator {
+  width: 1px;
+  height: 1.75rem;
+  margin: 0 0.25rem;
+  background: rgb(255 255 255 / 16%);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .folder:hover {
+    background: rgb(255 255 255 / 8%);
+  }
+
+  .dock:has(.dock-item:hover)::before {
+    opacity: 1;
+  }
+
+  .dock-item:hover {
+    color: white;
+  }
+
+  .folder:hover .folder-icon {
+    transform: translateY(-2px) scale(1.04);
+  }
+
+  .dock-item:hover .dock-label {
+    opacity: 1;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html:focus-within {
-    scroll-behavior: auto;
-  }
-
-  .plasma-card-bg,
-  .logo-loop__track {
-    animation: none !important;
-  }
-
-  .portfolio-card,
-  .interactive-card,
-  .interactive-card .glass-action,
+  .folder,
+  .folder-icon,
+  .dock::before,
+  .dock-item,
   .tactile-control,
   .modal-backdrop,
   .modal-sheet,
@@ -434,17 +527,16 @@ body,
     transition-duration: 0.01ms !important;
   }
 
-  .interactive-card:hover,
-  .interactive-card:active,
-  .interactive-card:hover .glass-action,
+  .folder:active,
+  .dock-item:hover,
+  .dock-item:active,
   .tactile-control:active {
     transform: none;
   }
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .portfolio-frame,
-  .portfolio-card,
+  .dock,
   .glass-label,
   .glass-action,
   .modal-backdrop,
@@ -455,8 +547,8 @@ body,
     -webkit-backdrop-filter: none;
   }
 
-  .portfolio-frame,
-  .portfolio-card,
+  .dock,
+  .widget,
   .project-card {
     background-color: rgb(39 39 42 / 96%);
   }
@@ -467,8 +559,10 @@ body,
 }
 
 @media (prefers-contrast: more) {
-  .portfolio-frame,
-  .portfolio-card,
+  .dock,
+  .widget,
+  .folder-tab,
+  .folder-body,
   .modal-sheet,
   .project-card,
   .glass-label,
@@ -477,7 +571,13 @@ body,
     border-color: rgb(255 255 255 / 42%);
   }
 
-  .portfolio-card,
+  /* the dock and widgets draw their edge with a shadow rim, so give them a real border here */
+  .dock,
+  .widget {
+    border: 1px solid rgb(255 255 255 / 42%);
+  }
+
+  .dock,
   .project-card,
   .modal-sheet {
     background-color: rgb(24 24 27 / 96%);

@@ -1,5 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
   <title id="title">RT logo</title>
-  <rect width="512" height="512" rx="64" ry="64" fill="#6d28d9"/>
-  <text x="50%" y="50%" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial" font-weight="800" font-size="220" fill="#000" text-anchor="middle" dominant-baseline="central">RT</text>
+  <defs>
+    <linearGradient id="wallpaper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#020617"/>
+      <stop offset=".5" stop-color="#18181b"/>
+      <stop offset="1" stop-color="#3b0764"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".62" r=".5">
+      <stop offset="0" stop-color="#7c3aed" stop-opacity=".75"/>
+      <stop offset="1" stop-color="#7c3aed" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".2"/>
+      <stop offset=".5" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#fff" stop-opacity=".08"/>
+    </linearGradient>
+    <!-- userSpaceOnUse: a bounding-box gradient collapses on the T's straight strokes -->
+    <linearGradient id="glass" gradientUnits="userSpaceOnUse" x1="0" y1="17" x2="0" y2="47">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="1" stop-color="#c4b5fd"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#wallpaper)"/>
+  <rect width="64" height="64" rx="15" fill="url(#glow)"/>
+  <rect width="64" height="64" rx="15" fill="url(#sheen)"/>
+  <rect x=".5" y=".5" width="63" height="63" rx="14.5" fill="none" stroke="url(#rim)"/>
+  <path d="M14 44V20h8a7 7 0 0 1 0 14h-8m8 0 7 10M35 20h17m-8.500 0v24" fill="none" stroke="url(#glass)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

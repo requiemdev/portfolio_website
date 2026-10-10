@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import ferrousImg from "../images/ferrous.webp";
 import astralImagesImg from "../images/astral_images.webp";
 import astralBotImg from "../images/astral_bot.webp";
@@ -20,12 +20,9 @@ import tankArenaController from "../images/tank_arena_controller.webp";
 import tankArenaHardware from "../images/tank_arena_hardware.webp";
 import tankArenaTanks from "../images/tank_arena_tanks.webp";
 
-type Props = {
-  isClosing: boolean;
-  onClose: () => void;
-};
-
-type Project = {
+export type Project = {
+  // projects with a slug get a desktop folder and their own stacked page
+  slug?: string;
   title: string;
   description: ReactNode;
   images: Array<{ src: string; alt: string }>;
@@ -34,8 +31,9 @@ type Project = {
   linkedin?: string;
 };
 
-const projects: Project[] = [
+export const projects: Project[] = [
   {
+    slug: "tank-arena",
     title: "Tank Arena",
     description: (
       <>
@@ -75,6 +73,7 @@ const projects: Project[] = [
       "https://www.linkedin.com/feed/update/urn:li:activity:7488355540826300416/",
   },
   {
+    slug: "ferrous-fellow",
     title: "Ferrous Fellow",
     description: (
       <>
@@ -91,6 +90,7 @@ const projects: Project[] = [
     github: "https://github.com/requiemdev/ECSE_Design_Competition",
   },
   {
+    slug: "rfid-record-player",
     title: "RFID Record Player",
     description: (
       <>
@@ -116,6 +116,7 @@ const projects: Project[] = [
     github: "https://github.com/requiemdev/RFID-Record-Player-ESP32",
   },
   {
+    slug: "meowpad",
     title: "MeowPad",
     description: (
       <>
@@ -138,6 +139,7 @@ const projects: Project[] = [
     github: "https://github.com/requiemdev/",
   },
   {
+    slug: "trial-ai",
     title: "Trial AI",
     description: (
       <>
@@ -226,179 +228,3 @@ const projects: Project[] = [
     github: "https://github.com/requiemdev/SOFTENG281_A3",
   },
 ];
-
-type ProjectCardProps = {
-  project: Project;
-  imageIndex: number;
-  onPreviousImage: () => void;
-  onNextImage: () => void;
-};
-
-function ProjectCard({
-  project,
-  imageIndex,
-  onPreviousImage,
-  onNextImage,
-}: ProjectCardProps) {
-  const hasMultipleImages = project.images.length > 1;
-  const activeImage = project.images[imageIndex];
-
-  return (
-    <article className="project-card bg-zinc-700/40 rounded-2xl border border-zinc-600/50 p-6">
-      <div className="relative h-48 rounded-xl mb-4 overflow-hidden">
-        <img
-          key={activeImage.src}
-          src={activeImage.src}
-          alt={activeImage.alt}
-          className="project-carousel-image w-full h-full object-cover rounded-xl"
-          loading="lazy"
-          decoding="async"
-        />
-
-        {hasMultipleImages && (
-          <>
-            <div className="absolute inset-0 flex items-center justify-between p-2 pointer-events-none">
-              <button
-                type="button"
-                onClick={onPreviousImage}
-                className="tactile-control carousel-control pointer-events-auto h-11 w-11 rounded-full bg-black/55 text-white"
-                aria-label={`Previous image for ${project.title}`}
-              >
-                ‹
-              </button>
-              <button
-                type="button"
-                onClick={onNextImage}
-                className="tactile-control carousel-control pointer-events-auto h-11 w-11 rounded-full bg-black/55 text-white"
-                aria-label={`Next image for ${project.title}`}
-              >
-                ›
-              </button>
-            </div>
-
-            <div
-              className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5"
-              aria-hidden="true"
-            >
-              {project.images.map((_, dotIndex) => (
-                <span
-                  key={dotIndex}
-                  className={`h-1.5 w-1.5 rounded-full ${
-                    dotIndex === imageIndex ? "bg-white/90" : "bg-white/40"
-                  }`}
-                />
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-
-      <h3 className="text-xl text-white mb-2">{project.title}</h3>
-      <p className="text-white/70 mb-4">{project.description}</p>
-
-      <div className="flex flex-wrap gap-2 mb-4">
-        {project.tags.map((tag) => (
-          <span
-            key={tag}
-            className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      <div className="flex gap-3">
-        <a
-          href={project.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="tactile-control primary-action inline-flex min-h-11 items-center px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500 text-white rounded-xl"
-        >
-          GitHub
-        </a>
-        {project.linkedin && (
-          <a
-            href={project.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="tactile-control glass-action inline-flex min-h-11 items-center px-4 py-2 bg-white/8 text-white rounded-xl border border-white/10"
-          >
-            LinkedIn Post
-          </a>
-        )}
-      </div>
-    </article>
-  );
-}
-
-export default function ProjectsModal({ isClosing, onClose }: Props) {
-  const [imageIndexes, setImageIndexes] = useState<Record<number, number>>({});
-
-  const handlePreviousImage = (projectIndex: number) => {
-    setImageIndexes((currentIndexes) => ({
-      ...currentIndexes,
-      [projectIndex]:
-        ((currentIndexes[projectIndex] ?? 0) - 1 +
-          projects[projectIndex].images.length) %
-        projects[projectIndex].images.length,
-    }));
-  };
-
-  const handleNextImage = (projectIndex: number) => {
-    setImageIndexes((currentIndexes) => ({
-      ...currentIndexes,
-      [projectIndex]:
-        ((currentIndexes[projectIndex] ?? 0) + 1) %
-        projects[projectIndex].images.length,
-    }));
-  };
-
-  return (
-    <div
-      className={`modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 ${
-        isClosing ? "is-closing" : "is-opening"
-      }`}
-      onClick={onClose}
-    >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="projects-title"
-        className={`modal-sheet bg-zinc-900/95 rounded-3xl border border-zinc-700/50 max-w-7xl w-full max-h-[90vh] overflow-y-auto p-4 sm:p-8 relative ${
-          isClosing ? "is-closing" : "is-opening"
-        }`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-violet-500/5 to-transparent rounded-3xl"></div>
-        <div className="relative z-10">
-          <div className="modal-header flex justify-between items-center gap-3 mb-8">
-            <h2 id="projects-title" className="text-2xl sm:text-3xl text-transparent bg-gradient-to-r from-purple-400 to-violet-400 bg-clip-text font-semibold">
-              Featured Projects
-            </h2>
-            <button
-              type="button"
-              onClick={onClose}
-              className="tactile-control close-control h-11 w-11 shrink-0 text-white/60 text-2xl"
-              aria-label="Close projects"
-              autoFocus
-            >
-              ✕
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {projects.map((project, projectIndex) => (
-              <ProjectCard
-                key={project.title}
-                project={project}
-                imageIndex={imageIndexes[projectIndex] ?? 0}
-                onPreviousImage={() => handlePreviousImage(projectIndex)}
-                onNextImage={() => handleNextImage(projectIndex)}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
