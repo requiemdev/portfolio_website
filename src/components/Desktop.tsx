@@ -93,14 +93,29 @@ export default function Desktop() {
 
       <div className="flex flex-1 flex-col items-center justify-center text-center">
         <h1 className="text-5xl font-semibold text-white sm:text-6xl">
-          I'm Ryan.
+          Hi! I'm Ryan
         </h1>
         <p className="mt-4 max-w-md text-lg text-white/70">
-          Third-year Software Engineering student at the University of
-          Auckland, building back-end systems, APIs, machine learning projects
-          and the odd bit of hardware. Outside of work I play guitar, solve
-          Rubik's cubes and build small creative projects.
+          Software Engineering @ University of Auckland
         </p>
+        <a
+          href={`#${projects.find((project) => project.slug)?.slug ?? "more"}`}
+          className="tactile-control scroll-hint mt-8 h-11 w-11 rounded-full text-white"
+          aria-label="Scroll down to projects"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className="h-5 w-5"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.25"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m5 9 7 7 7-7" />
+          </svg>
+        </a>
       </div>
 
       <nav
