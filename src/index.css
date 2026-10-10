@@ -377,7 +377,19 @@ html {
 }
 
 /* Content layer: glass rim and sheen but no blur, since only the wallpaper sits behind. Real glass is reserved for the dock, sheets and media controls. */
+/* The columns are empty space between their items: let presses through to anything dragged underneath. */
+#desktop > * {
+  pointer-events: none;
+}
+
+#desktop > * > * {
+  pointer-events: auto;
+}
+
 .widget {
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
   padding: 1rem 1.125rem;
   border-radius: 1.5rem;
   background: var(--glass-sheen), rgb(255 255 255 / 6%);
@@ -405,6 +417,8 @@ html {
   font-size: 0.8125rem;
   line-height: 1.25;
   text-align: center;
+  -webkit-user-select: none;
+  user-select: none;
   transition:
     background-color 180ms ease-out,
     transform var(--motion-quick) var(--ease-press);

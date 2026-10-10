@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type PointerEvent } from "react";
 import { projects } from "./projectData";
 
 const WEEKDAYS = ["M", "T", "W", "T", "F", "S", "S"];
@@ -13,6 +13,55 @@ function FolderIcon() {
       <rect x="4" y="14" width="56" height="36" rx="6" fill="#a78bfa" />
     </svg>
   );
+}
+
+// Mouse and pen only: a touch drag has to keep scrolling the page.
+// The offset lives in the element's own `translate`, which React never writes and the hover/press transforms don't touch.
+function startDrag(event: PointerEvent<HTMLElement>) {
+  if (event.pointerType === "touch" || event.button !== 0) return;
+  const element = event.currentTarget;
+  const column = element.parentElement!;
+  const { pointerId, clientX: startX, clientY: startY } = event;
+  const [originX, originY] = [0, 1].map(
+    (axis) => parseFloat(element.style.translate.split(" ")[axis]) || 0,
+  );
+  const box = element.getBoundingClientRect();
+  const bounds = element.closest("section")!.getBoundingClientRect();
+  const clamp = (value: number, min: number, max: number) =>
+    Math.min(Math.max(value, min), max);
+  let dragged = false;
+
+  const move = (moveEvent: globalThis.PointerEvent) => {
+    const dx = moveEvent.clientX - startX;
+    const dy = moveEvent.clientY - startY;
+    // a few pixels of slack so a slightly shaky click still opens the folder
+    if (!dragged && Math.hypot(dx, dy) < 4) return;
+    if (!dragged) {
+      dragged = true;
+      element.setPointerCapture(pointerId);
+      // the column needs lifting too: its entrance animation makes it a stacking context.
+      // Left raised after the drop, or the next column would cover whatever was dragged into it.
+      element.style.zIndex = column.style.zIndex = "30";
+    }
+    const x = originX + clamp(dx, bounds.left - box.left, bounds.right - box.right);
+    const y = originY + clamp(dy, bounds.top - box.top, bounds.bottom - box.bottom);
+    element.style.translate = `${x}px ${y}px`;
+  };
+
+  const end = () => {
+    element.removeEventListener("pointermove", move);
+    element.removeEventListener("pointerup", end);
+    element.removeEventListener("pointercancel", end);
+    if (!dragged) return;
+    // dropping a folder must not follow its link; the click fires before this timeout
+    const swallowClick = (clickEvent: MouseEvent) => clickEvent.preventDefault();
+    window.addEventListener("click", swallowClick, true);
+    window.setTimeout(() => window.removeEventListener("click", swallowClick, true));
+  };
+
+  element.addEventListener("pointermove", move);
+  element.addEventListener("pointerup", end);
+  element.addEventListener("pointercancel", end);
 }
 
 export default function Desktop() {
@@ -43,7 +92,7 @@ export default function Desktop() {
       className="min-h-svh flex flex-col gap-8 p-4 pb-28 md:grid md:grid-cols-[14rem_1fr_14rem] md:p-6 md:pb-28"
     >
       <div className="hidden gap-4 md:flex md:flex-col">
-        <div className="widget flex-1 md:flex-none">
+        <div className="widget flex-1 md:flex-none" onPointerDown={startDrag}>
           <time
             dateTime={now.toISOString()}
             className="block text-5xl font-semibold tabular-nums tracking-tight text-white"
@@ -59,7 +108,7 @@ export default function Desktop() {
           </div>
         </div>
 
-        <div className="widget flex-1 md:flex-none">
+        <div className="widget flex-1 md:flex-none" onPointerDown={startDrag}>
           <div className="mb-2 text-sm font-semibold text-white">
             {now.toLocaleDateString([], { month: "long", year: "numeric" })}
           </div>
@@ -125,12 +174,23 @@ export default function Desktop() {
         {projects
           .filter((project) => project.slug)
           .map((project) => (
-            <a key={project.slug} href={`#${project.slug}`} className="folder">
+            <a
+              key={project.slug}
+              href={`#${project.slug}`}
+              className="folder"
+              draggable={false}
+              onPointerDown={startDrag}
+            >
               <FolderIcon />
               <span>{project.title}</span>
             </a>
           ))}
-        <a href="#more" className="folder">
+        <a
+          href="#more"
+          className="folder"
+          draggable={false}
+          onPointerDown={startDrag}
+        >
           <FolderIcon />
           <span>More</span>
         </a>
