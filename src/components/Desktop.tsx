@@ -64,6 +64,8 @@ function startDrag(event: PointerEvent<HTMLElement>) {
   element.addEventListener("pointercancel", end);
 }
 
+const TIME_ZONE = "Pacific/Auckland";
+
 export default function Desktop() {
   const [now, setNow] = useState(() => new Date());
 
@@ -80,8 +82,12 @@ export default function Desktop() {
     return () => window.clearInterval(timer);
   }, []);
 
-  const year = now.getFullYear();
-  const month = now.getMonth();
+  // en-CA formats as YYYY-MM-DD, giving the Auckland calendar date whatever the viewer's zone
+  const [year, monthNumber, today] = now
+    .toLocaleDateString("en-CA", { timeZone: TIME_ZONE })
+    .split("-")
+    .map(Number);
+  const month = monthNumber - 1;
   // Monday-first: getDay() is 0 for Sunday
   const leadingBlanks = (new Date(year, month, 1).getDay() + 6) % 7;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -97,20 +103,30 @@ export default function Desktop() {
             dateTime={now.toISOString()}
             className="block text-5xl font-semibold tabular-nums tracking-tight text-white"
           >
-            {now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            {now.toLocaleTimeString([], {
+              timeZone: TIME_ZONE,
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
           </time>
           <div className="mt-1 text-sm text-white/70">
             {now.toLocaleDateString([], {
+              timeZone: TIME_ZONE,
               weekday: "long",
               day: "numeric",
               month: "long",
             })}
           </div>
+          <div className="text-sm text-white/50">Auckland</div>
         </div>
 
         <div className="widget flex-1 md:flex-none" onPointerDown={startDrag}>
           <div className="mb-2 text-sm font-semibold text-white">
-            {now.toLocaleDateString([], { month: "long", year: "numeric" })}
+            {now.toLocaleDateString([], {
+              timeZone: TIME_ZONE,
+              month: "long",
+              year: "numeric",
+            })}
           </div>
           <div
             className="grid grid-cols-7 gap-y-1 text-center text-xs tabular-nums"
@@ -128,7 +144,7 @@ export default function Desktop() {
               <span
                 key={index}
                 className={`mx-auto grid h-6 w-6 place-items-center rounded-full ${
-                  index + 1 === now.getDate()
+                  index + 1 === today
                     ? "bg-slate-500 font-semibold text-white"
                     : "text-white/80"
                 }`}
