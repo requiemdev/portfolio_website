@@ -47,10 +47,15 @@ export const projects: Project[] = [
     title: "Tank Arena",
     description: (
       <>
-        Two-player laser-tag duel between custom 3D-printed ESP32 tanks, and
-        winner of the Engineering Excellence Award. The tanks run on custom
-        PCBs, with servo-mounted IR emitters and four-direction hit sensing. I
-        designed and built the WebSocket game server and browser interfaces:
+        Winner of the Engineering Excellence Award for the Part III division.
+        <br />
+        <br />
+        One-month long 5-man team project. 2-man tank fighter that uses custom
+        3D printed parts. Tanks shoot using 38 kHz IR emitters and are controlled
+        over a phone & local server using WebSockets.
+        <br />
+        <br />
+        Designed and built the WebSocket game server and browser interfaces:
         real-time controls, hit validation, match progression, spectator views,
         and a persistent leaderboard. Local-network latency stayed under 10 ms
         with 0% packet loss during testing.
@@ -83,19 +88,46 @@ export const projects: Project[] = [
       "https://www.linkedin.com/feed/update/urn:li:activity:7488355540826300416/",
   },
   {
+    slug: "astral",
+    title: "Astral",
+    description: (
+      <>
+        A cross-platform ultra-lightweight AI chat box built in Typescript and
+        Rust on Tauri. It opens an overlay where users can start a conversation
+        or ask questions to any LLMs available. Connections allowed include
+        Claude/Codex subscriptions, and OpenAI/Claude/Gemini API keys. Allows
+        file and image uploads, and has screen awareness.
+      </>
+    ),
+    images: [
+      { src: astralAnswer, alt: "Astral - Answer with a code example" },
+      {
+        src: astralAttachment,
+        alt: "Astral - Question about an attached screenshot",
+      },
+      { src: astralThinking, alt: "Astral - Waiting on a reply" },
+    ],
+    tags: ["Tauri", "Rust", "React", "TypeScript", "Claude API", "OpenAI API"],
+    github: "https://github.com/requiemdev/some-ai-app",
+  },
+  {
     slug: "ev-charging-simulator",
     title: "EV Charging Simulator",
     description: (
       <>
         Full-stack simulation of remote charging for an electric vehicle. A
         vanilla HTML/CSS/JS dashboard shows the live battery and charging state,
-        and lets the owner start or stop charging or set a schedule. Requests go
-        through an ASP.NET Core API on .NET 10, which checks vehicle ownership
-        in Azure SQL before calling Azure Functions. A C# simulator plays the
-        vehicle: it connects to Azure IoT Hub over MQTT, sends telemetry every
-        15 seconds, and responds to direct-method charging commands. Schedules
-        are written to the device twin with ETag-based optimistic concurrency,
-        and the simulator reports whether each one was applied or rejected.
+        and lets the owner start or stop charging or set a schedule.
+        <br />
+        <br />
+        Requests go through an ASP.NET Core API on .NET 10, which checks vehicle
+        ownership in Azure SQL before calling Azure Functions.
+        <br />
+        <br />A C# simulator plays the vehicle: it connects to Azure IoT Hub
+        over MQTT, sends telemetry every 15 seconds, and responds to
+        direct-method charging commands. Schedules are written to the device
+        twin with ETag-based optimistic concurrency, and the simulator reports
+        whether each one was applied or rejected.
       </>
     ),
     images: [
@@ -122,17 +154,20 @@ export const projects: Project[] = [
     title: "Agent QA",
     description: (
       <>
-        A local pre-merge QA CLI for JavaScript and TypeScript projects. Point
-        it at a repository, a running localhost URL and a one-line description
-        of the change, and it diffs the branch against its merge base, plans
-        test scenarios, and explores them in Chromium through Playwright MCP. It
-        then generates Playwright and unit tests, shows them for approval, and
-        runs them with screenshots and traces. A final AI stage reads the
+        A local QA CLI for JavaScript and TypeScript projects. Point it at a
+        repository, a running localhost URL and a short description of the
+        change, and it diffs the branch against its merge base, plans test
+        scenarios, and explores them in Chromium through Playwright MCP.
+        <br />
+        <br />
+        It then generates Playwright and unit tests, shows them for approval,
+        and runs them with screenshots and traces. A final AI stage reads the
         evidence and reports the failures with a suspected cause and suggested
-        fix. Each stage is a sandboxed Codex call with a strict JSON schema, and
+        fix.
+        <br />
+        <br />
+        Each stage is a sandboxed Codex call with a strict JSON schema, and
         every session is saved to disk so it can be reopened, rerun or exported.
-        The screenshots show it catching a close button with an empty click
-        handler on this site.
       </>
     ),
     images: [
@@ -157,8 +192,8 @@ export const projects: Project[] = [
     description: (
       <>
         A toy robot that recognises faces and speech using TensorFlow Lite and
-        OpenCV. It analyses emotional cues through the OpenAI API and recommends
-        music to match.
+        OpenCV. It analyses emotional cues from visual and verbal inputs and
+        passes it through the OpenAI API to recommend music.
       </>
     ),
     images: [
@@ -167,33 +202,6 @@ export const projects: Project[] = [
     ],
     tags: ["OpenCV", "FER", "Machine Learning", "OpenAI"],
     github: "https://github.com/requiemdev/ECSE_Design_Competition",
-  },
-  {
-    slug: "astral",
-    title: "Astral",
-    description: (
-      <>
-        An always-on-top chat overlay for the desktop. A global shortcut shows
-        it over whatever app is in focus, and Esc or clicking away hides it
-        again. It uses the AI you already pay for: a Claude or ChatGPT
-        subscription through the official Claude Code and Codex CLIs, or an API
-        key for Claude, OpenAI or Gemini. Files and screenshots can be attached
-        or pasted in, and double-tapping Command from any app captures the
-        current display and attaches it. The shell is Tauri 2 in Rust, handling
-        the global shortcut, tray icon, screen capture and CLI processes, with a
-        React and TypeScript chat UI that renders replies as Markdown.
-      </>
-    ),
-    images: [
-      { src: astralAnswer, alt: "Astral - Answer with a code example" },
-      {
-        src: astralAttachment,
-        alt: "Astral - Question about an attached screenshot",
-      },
-      { src: astralThinking, alt: "Astral - Waiting on a reply" },
-    ],
-    tags: ["Tauri", "Rust", "React", "TypeScript", "Claude API", "OpenAI API"],
-    github: "https://github.com/requiemdev/some-ai-app",
   },
   {
     title: "RFID Record Player",
@@ -246,10 +254,13 @@ export const projects: Project[] = [
         An interactive trial simulation built with my teammates for the SE206
         Design Project. The player is dropped into a morally ambiguous dilemma
         and chats with the parties involved to decide whether the defendant's
-        actions were justified. The AI defendants are powered by OpenAI's LLM
-        API and voiced by Google's TTS API. Built with JavaFX and Java
-        concurrency, using collaborative GitHub workflows and regular client
-        interviews to practise requirements engineering.
+        actions were justified.
+        <br />
+        <br />
+        The AI defendants are powered by OpenAI's LLM API and voiced by Google's
+        TTS API. Built with JavaFX and Java concurrency, using collaborative
+        GitHub workflows and regular client interviews to practise requirements
+        engineering.
       </>
     ),
     images: [
