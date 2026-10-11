@@ -10,6 +10,9 @@ import se281 from "../images/281.webp";
 import meowpad_cad from "../images/meowpad_cad.webp";
 import meowpad_pcb from "../images/meowpad_pcb.webp";
 import record_bb from "../images/record_bb.webp";
+import se206 from "../images/se206.webp";
+import se2061 from "../images/se2061.webp";
+import se2063 from "../images/se2063.webp";
 import vehicleDashboard from "../images/vehicle_dashboard.webp";
 import vehicleTelemetry from "../images/vehicle_telemetry.webp";
 import ff from "../images/ff.webp";
@@ -32,27 +35,26 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    slug: "vehicle-ev-simulator",
-    title: "Vehicle EV Simulator",
+    slug: "ev-charging-simulator",
+    title: "EV Charging Simulator",
     description: (
       <>
-        Full-stack simulation of an electric vehicle's remote charging
-        controls. A vanilla HTML/CSS/JS dashboard shows the live battery and
-        charging state, starts or stops charging, and sets a charging schedule
+        Full-stack simulation of remote charging for an electric vehicle. A
+        vanilla HTML/CSS/JS dashboard shows the live battery and charging state,
+        and lets the owner start or stop charging or set a schedule. Requests go
         through an ASP.NET Core API on .NET 10, which checks vehicle ownership
-        against Azure SQL before calling Azure Functions. A C# vehicle
-        simulator connects to Azure IoT Hub over MQTT, sending telemetry every
-        15 seconds and responding to direct-method charging commands. Schedules
-        are written to the device twin's desired properties with ETag-based
-        optimistic concurrency, and the simulator reports back whether each
-        revision was applied or rejected.
+        in Azure SQL before calling Azure Functions. A C# simulator plays the
+        vehicle: it connects to Azure IoT Hub over MQTT, sends telemetry every
+        15 seconds, and responds to direct-method charging commands. Schedules
+        are written to the device twin with ETag-based optimistic concurrency,
+        and the simulator reports whether each one was applied or rejected.
       </>
     ),
     images: [
-      { src: vehicleDashboard, alt: "Vehicle EV Simulator - Dashboard" },
+      { src: vehicleDashboard, alt: "EV Charging Simulator - Dashboard" },
       {
         src: vehicleTelemetry,
-        alt: "Vehicle EV Simulator - Simulator Telemetry Log",
+        alt: "EV Charging Simulator - Simulator Telemetry Log",
       },
     ],
     tags: [
@@ -72,13 +74,13 @@ export const projects: Project[] = [
     title: "Tank Arena",
     description: (
       <>
-        Engineering Excellence Award-winning two-player laser-tag duel built
-        with custom 3D-printed ESP32 tanks, custom PCBs, servo-mounted IR
-        emitters, and four-direction hit sensing. Designed and implemented the
-        WebSocket game server and browser interfaces for real-time controls, hit
-        validation, match progression, spectator views, and a persistent
-        leaderboard, achieving sub-10 ms local-network latency with 0% packet
-        loss during testing.
+        Two-player laser-tag duel between custom 3D-printed ESP32 tanks, and
+        winner of the Engineering Excellence Award. The tanks run on custom
+        PCBs, with servo-mounted IR emitters and four-direction hit sensing. I
+        designed and built the WebSocket game server and browser interfaces:
+        real-time controls, hit validation, match progression, spectator views,
+        and a persistent leaderboard. Local-network latency stayed under 10 ms
+        with 0% packet loss during testing.
       </>
     ),
     images: [
@@ -112,9 +114,9 @@ export const projects: Project[] = [
     title: "Ferrous Fellow",
     description: (
       <>
-        Created a toy robot using TensorFlow Lite and OpenCV for facial and
-        speech recognition. Integrated with the OpenAI API to analyse emotional
-        cues and recommend music accordingly.
+        A toy robot that recognises faces and speech using TensorFlow Lite and
+        OpenCV. It analyses emotional cues through the OpenAI API and recommends
+        music to match.
       </>
     ),
     images: [
@@ -129,18 +131,15 @@ export const projects: Project[] = [
     title: "RFID Record Player",
     description: (
       <>
-        RFID Record player inspired by{" "}
+        An RFID record player inspired by{" "}
         <a href="https://github.com/fatihak/RFID-Record-Player">
           fatihak&apos;s project
         </a>
-        . Designed to be cost effective by replacing the original Raspberry Pi
-        Zero 2W MCU with an ESP-32. When a "record" is placed onto the
-        turntable, an internal RFID reader picks up on the RFID tag on the disc,
-        which maps to the specific song&apos;s Spotify track ID. When the
-        tonearm is in the active position, the song is played on the user&apos;s
-        Spotify, and the record spins. When the tonearm is moved away, the
-        record stops spinning, and the music is paused on the user&apos;s
-        device.
+        , made cheaper by swapping the original Raspberry Pi Zero 2W for an
+        ESP-32. Each "record" carries an RFID tag mapped to a Spotify track ID,
+        which a reader inside the turntable picks up. Move the tonearm into position and
+        the song plays on your Spotify while the record spins. Move it away and
+        the record stops and the music pauses.
       </>
     ),
     images: [
@@ -155,13 +154,12 @@ export const projects: Project[] = [
     title: "MeowPad",
     description: (
       <>
-        Designed a hot-swappable number pad from scratch using KiCAD for PCB
-        design, AutoCAD Inventor for case and plate design, and QMK for
-        firmware. Powered by an Arduino Pro Micro footprint MCU, and equipped
-        with an OLED display and EC11 rotary encoder knob, this numberpad is
-        fully customisable with switches, keycaps and cases. The MeowPad
-        supports a 3D printed case with PCB mounted standoffs, as well as a
-        stacked acrylic plate mount.
+        A hot-swappable number pad designed from scratch: PCB in KiCAD, case and
+        plate in AutoCAD Inventor, firmware in QMK. It runs on an Arduino Pro
+        Micro footprint MCU, with an OLED display and an EC11 rotary encoder
+        knob. Switches, keycaps and cases are all customisable, and it can be
+        built with a 3D printed case on PCB-mounted standoffs or a stacked
+        acrylic plate mount.
       </>
     ),
     images: [
@@ -174,12 +172,41 @@ export const projects: Project[] = [
     github: "https://github.com/requiemdev/",
   },
   {
+    title: "Trial AI",
+    description: (
+      <>
+        An interactive trial simulation built with my teammates for the SE206
+        Design Project. The player is dropped into a morally ambiguous dilemma
+        and chats with the parties involved to decide whether the defendant's
+        actions were justified. The AI defendants are powered by OpenAI's LLM
+        API and voiced by Google's TTS API. Built with JavaFX and Java
+        concurrency, using collaborative GitHub workflows and regular client
+        interviews to practise requirements engineering.
+      </>
+    ),
+    images: [
+      { src: se206, alt: "SE206" },
+      { src: se2061, alt: "SE206 - Alternate View" },
+      { src: se2063, alt: "SE206 - Alternate View" },
+    ],
+    tags: [
+      "Java",
+      "JavaFX",
+      "Java Concurrency",
+      "GitHub Flow",
+      "Requirements Engineering",
+      "OpenAI LLM",
+      "Google TTS",
+    ],
+    github: "https://github.com/requiemdev/SE206-Trial-AI",
+  },
+  {
     title: "Astral Images",
     description: (
       <>
-        WIP Cloud Image Hosting Site for with React and Tailwind CSS on the
-        frontend, Express.js, Firebase, and Firestore for backend logic and
-        authentication. Used Cloudflare R2 for image storage.
+        A work-in-progress cloud image hosting site. React and Tailwind CSS on
+        the frontend, Express.js with Firebase and Firestore for backend logic
+        and authentication, and Cloudflare R2 for image storage.
       </>
     ),
     images: [{ src: astralImagesImg, alt: "Astral Images" }],
@@ -190,11 +217,10 @@ export const projects: Project[] = [
     title: "Astral Bot/Astral Music",
     description: (
       <>
-        Created a modular Discord bot for server moderation and entertainment,
-        integrating MongoDB, Reddit, and VALORANT API. Built advanced music
-        features including queueing, volume control, and voice filters, later
-        merging multiple bots into a unified system using Discord.js and
-        Node.js.
+        A modular Discord bot for server moderation and entertainment, built
+        with Discord.js and Node.js and integrating MongoDB, Reddit, and the
+        VALORANT API. Music features include queueing, volume control, and voice
+        filters. It started as several bots, later merged into one.
       </>
     ),
     images: [{ src: astralBotImg, alt: "Astral Bot / Astral Music" }],
@@ -205,9 +231,8 @@ export const projects: Project[] = [
     title: "FFXIV Market Predict",
     description: (
       <>
-        Created a basic API wrapper for crowd-sourced game market information,
-        and applied a random forest regressor with sklearn to create a basic
-        prediction model for in-game prices.
+        A basic API wrapper for crowd-sourced game market data, plus a random
+        forest regressor in sklearn that predicts in-game prices.
       </>
     ),
     images: [{ src: ffxivImg, alt: "FFXIV Market Predict" }],
@@ -218,10 +243,10 @@ export const projects: Project[] = [
     title: "Assignment: Risk Simulation",
     description: (
       <>
-        Assignment for the course SOFTENG 281: Object Oriented Programming.
-        Implement design patterns, data structures and algorithms to create a
-        CLI adaptation of classic board game Risk. Passed all test cases, and
-        received an overall of 99.7% in the course.
+        A CLI adaptation of the classic board game Risk, built for SOFTENG 281:
+        Object Oriented Programming using design patterns, data structures and
+        algorithms. Passed all test cases, and I received 99.7% overall in the
+        course.
       </>
     ),
     images: [
