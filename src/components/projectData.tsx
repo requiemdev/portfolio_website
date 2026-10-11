@@ -10,9 +10,8 @@ import se281 from "../images/281.webp";
 import meowpad_cad from "../images/meowpad_cad.webp";
 import meowpad_pcb from "../images/meowpad_pcb.webp";
 import record_bb from "../images/record_bb.webp";
-import se206 from "../images/se206.webp";
-import se2061 from "../images/se2061.webp";
-import se2063 from "../images/se2063.webp";
+import vehicleDashboard from "../images/vehicle_dashboard.webp";
+import vehicleTelemetry from "../images/vehicle_telemetry.webp";
 import ff from "../images/ff.webp";
 import meowpad_built from "../images/meowpad_built.webp";
 import tankArenaAward from "../images/tank_arena_award.webp";
@@ -32,6 +31,42 @@ export type Project = {
 };
 
 export const projects: Project[] = [
+  {
+    slug: "vehicle-ev-simulator",
+    title: "Vehicle EV Simulator",
+    description: (
+      <>
+        Full-stack simulation of an electric vehicle's remote charging
+        controls. A vanilla HTML/CSS/JS dashboard shows the live battery and
+        charging state, starts or stops charging, and sets a charging schedule
+        through an ASP.NET Core API on .NET 10, which checks vehicle ownership
+        against Azure SQL before calling Azure Functions. A C# vehicle
+        simulator connects to Azure IoT Hub over MQTT, sending telemetry every
+        15 seconds and responding to direct-method charging commands. Schedules
+        are written to the device twin's desired properties with ETag-based
+        optimistic concurrency, and the simulator reports back whether each
+        revision was applied or rejected.
+      </>
+    ),
+    images: [
+      { src: vehicleDashboard, alt: "Vehicle EV Simulator - Dashboard" },
+      {
+        src: vehicleTelemetry,
+        alt: "Vehicle EV Simulator - Simulator Telemetry Log",
+      },
+    ],
+    tags: [
+      "C#",
+      ".NET 10",
+      "ASP.NET Core",
+      "Azure IoT Hub",
+      "Azure Functions",
+      "Azure SQL",
+      "MQTT",
+      "JavaScript",
+    ],
+    github: "https://github.com/requiemdev/vehicle_api",
+  },
   {
     slug: "tank-arena",
     title: "Tank Arena",
@@ -137,37 +172,6 @@ export const projects: Project[] = [
     ],
     tags: ["KiCAD", "C", "AutoCAD Inventor", "3D Printing"],
     github: "https://github.com/requiemdev/",
-  },
-  {
-    slug: "trial-ai",
-    title: "Trial AI",
-    description: (
-      <>
-        Created alongside my teammates for the SE206 Design Project, this is an
-        interactive trial simulation that places the player into a morally
-        ambiguous dilemma. By chatting with the involved parties, the player
-        must decide whether the defendant's actions were or were not justified.
-        This project utilised JavaFX, collaborative GitHub workflows, Java
-        concurrency and regular interviews with the clients to practice
-        requirements engineering. The AI defendants were powered by OpenAI's LLM
-        API, voiced by Google's TTS API.
-      </>
-    ),
-    images: [
-      { src: se206, alt: "SE206" },
-      { src: se2061, alt: "SE206 - Alternate View" },
-      { src: se2063, alt: "SE206 - Alternate View" },
-    ],
-    tags: [
-      "Java",
-      "JavaFX",
-      "Java Concurrency",
-      "GitHub Flow",
-      "Requirements Engineering",
-      "OpenAI LLM",
-      "Google TTS",
-    ],
-    github: "https://github.com/requiemdev/SE206-Trial-AI",
   },
   {
     title: "Astral Images",

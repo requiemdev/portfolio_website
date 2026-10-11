@@ -185,6 +185,8 @@ a,
   position: absolute;
   inset: 1.25rem 0 0;
   border-radius: 0.75rem;
+  /* opaque, so an image that doesn't fill the card hides the cards behind; matched to the surface so the bars blend in */
+  background: var(--card-bg, var(--page-bg));
   box-shadow: 0 10px 24px rgb(0 0 0 / 30%);
   transform: var(--rest);
   transform-origin: center top;
@@ -271,6 +273,8 @@ a,
 }
 
 .project-card {
+  /* the card's own bg-zinc-700/40 flattened over the page */
+  --card-bg: color-mix(in oklab, var(--color-zinc-700) 40%, var(--page-bg));
   box-shadow:
     0 1px 0 rgb(255 255 255 / 5%) inset,
     0 14px 34px rgb(0 0 0 / 16%);

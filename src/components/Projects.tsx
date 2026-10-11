@@ -47,7 +47,7 @@ function Carousel({
             <img
               src={image.src}
               alt={image.alt}
-              className="h-full w-full rounded-xl object-cover"
+              className="h-full w-full rounded-xl object-contain"
               loading="lazy"
               decoding="async"
             />
