@@ -26,6 +26,9 @@ import agentQaPlan from "../images/agent_qa_plan.webp";
 import agentQaRun from "../images/agent_qa_run.webp";
 import agentQaResults from "../images/agent_qa_results.webp";
 import agentQaReport from "../images/agent_qa_report.webp";
+import astralAnswer from "../images/astral_answer.webp";
+import astralAttachment from "../images/astral_attachment.webp";
+import astralThinking from "../images/astral_thinking.webp";
 
 export type Project = {
   // projects with a slug get a desktop folder and their own stacked page
@@ -122,14 +125,14 @@ export const projects: Project[] = [
         A local pre-merge QA CLI for JavaScript and TypeScript projects. Point
         it at a repository, a running localhost URL and a one-line description
         of the change, and it diffs the branch against its merge base, plans
-        test scenarios, and explores them in Chromium through Playwright MCP.
-        It then generates Playwright and unit tests, shows them for approval,
-        and runs them with screenshots and traces. A final AI stage reads the
+        test scenarios, and explores them in Chromium through Playwright MCP. It
+        then generates Playwright and unit tests, shows them for approval, and
+        runs them with screenshots and traces. A final AI stage reads the
         evidence and reports the failures with a suspected cause and suggested
         fix. Each stage is a sandboxed Codex call with a strict JSON schema, and
-        every session is saved to disk so it can be reopened, rerun or
-        exported. The screenshots show it catching a close button with an
-        empty click handler on this site.
+        every session is saved to disk so it can be reopened, rerun or exported.
+        The screenshots show it catching a close button with an empty click
+        handler on this site.
       </>
     ),
     images: [
@@ -166,7 +169,33 @@ export const projects: Project[] = [
     github: "https://github.com/requiemdev/ECSE_Design_Competition",
   },
   {
-    slug: "rfid-record-player",
+    slug: "astral",
+    title: "Astral",
+    description: (
+      <>
+        An always-on-top chat overlay for the desktop. A global shortcut shows
+        it over whatever app is in focus, and Esc or clicking away hides it
+        again. It uses the AI you already pay for: a Claude or ChatGPT
+        subscription through the official Claude Code and Codex CLIs, or an API
+        key for Claude, OpenAI or Gemini. Files and screenshots can be attached
+        or pasted in, and double-tapping Command from any app captures the
+        current display and attaches it. The shell is Tauri 2 in Rust, handling
+        the global shortcut, tray icon, screen capture and CLI processes, with a
+        React and TypeScript chat UI that renders replies as Markdown.
+      </>
+    ),
+    images: [
+      { src: astralAnswer, alt: "Astral - Answer with a code example" },
+      {
+        src: astralAttachment,
+        alt: "Astral - Question about an attached screenshot",
+      },
+      { src: astralThinking, alt: "Astral - Waiting on a reply" },
+    ],
+    tags: ["Tauri", "Rust", "React", "TypeScript", "Claude API", "OpenAI API"],
+    github: "https://github.com/requiemdev/some-ai-app",
+  },
+  {
     title: "RFID Record Player",
     description: (
       <>
@@ -176,9 +205,9 @@ export const projects: Project[] = [
         </a>
         , made cheaper by swapping the original Raspberry Pi Zero 2W for an
         ESP-32. Each "record" carries an RFID tag mapped to a Spotify track ID,
-        which a reader inside the turntable picks up. Move the tonearm into position and
-        the song plays on your Spotify while the record spins. Move it away and
-        the record stops and the music pauses.
+        which a reader inside the turntable picks up. Move the tonearm into
+        position and the song plays on your Spotify while the record spins. Move
+        it away and the record stops and the music pauses.
       </>
     ),
     images: [
