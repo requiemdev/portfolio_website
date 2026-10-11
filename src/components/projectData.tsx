@@ -21,6 +21,11 @@ import tankArenaAward from "../images/tank_arena_award.webp";
 import tankArenaController from "../images/tank_arena_controller.webp";
 import tankArenaHardware from "../images/tank_arena_hardware.webp";
 import tankArenaTanks from "../images/tank_arena_tanks.webp";
+import agentQaStart from "../images/agent_qa_start.webp";
+import agentQaPlan from "../images/agent_qa_plan.webp";
+import agentQaRun from "../images/agent_qa_run.webp";
+import agentQaResults from "../images/agent_qa_results.webp";
+import agentQaReport from "../images/agent_qa_report.webp";
 
 export type Project = {
   // projects with a slug get a desktop folder and their own stacked page
@@ -34,41 +39,6 @@ export type Project = {
 };
 
 export const projects: Project[] = [
-  {
-    slug: "ev-charging-simulator",
-    title: "EV Charging Simulator",
-    description: (
-      <>
-        Full-stack simulation of remote charging for an electric vehicle. A
-        vanilla HTML/CSS/JS dashboard shows the live battery and charging state,
-        and lets the owner start or stop charging or set a schedule. Requests go
-        through an ASP.NET Core API on .NET 10, which checks vehicle ownership
-        in Azure SQL before calling Azure Functions. A C# simulator plays the
-        vehicle: it connects to Azure IoT Hub over MQTT, sends telemetry every
-        15 seconds, and responds to direct-method charging commands. Schedules
-        are written to the device twin with ETag-based optimistic concurrency,
-        and the simulator reports whether each one was applied or rejected.
-      </>
-    ),
-    images: [
-      { src: vehicleDashboard, alt: "EV Charging Simulator - Dashboard" },
-      {
-        src: vehicleTelemetry,
-        alt: "EV Charging Simulator - Simulator Telemetry Log",
-      },
-    ],
-    tags: [
-      "C#",
-      ".NET 10",
-      "ASP.NET Core",
-      "Azure IoT Hub",
-      "Azure Functions",
-      "Azure SQL",
-      "MQTT",
-      "JavaScript",
-    ],
-    github: "https://github.com/requiemdev/vehicle_api",
-  },
   {
     slug: "tank-arena",
     title: "Tank Arena",
@@ -110,7 +80,76 @@ export const projects: Project[] = [
       "https://www.linkedin.com/feed/update/urn:li:activity:7488355540826300416/",
   },
   {
-    slug: "ferrous-fellow",
+    slug: "ev-charging-simulator",
+    title: "EV Charging Simulator",
+    description: (
+      <>
+        Full-stack simulation of remote charging for an electric vehicle. A
+        vanilla HTML/CSS/JS dashboard shows the live battery and charging state,
+        and lets the owner start or stop charging or set a schedule. Requests go
+        through an ASP.NET Core API on .NET 10, which checks vehicle ownership
+        in Azure SQL before calling Azure Functions. A C# simulator plays the
+        vehicle: it connects to Azure IoT Hub over MQTT, sends telemetry every
+        15 seconds, and responds to direct-method charging commands. Schedules
+        are written to the device twin with ETag-based optimistic concurrency,
+        and the simulator reports whether each one was applied or rejected.
+      </>
+    ),
+    images: [
+      { src: vehicleDashboard, alt: "EV Charging Simulator - Dashboard" },
+      {
+        src: vehicleTelemetry,
+        alt: "EV Charging Simulator - Simulator Telemetry Log",
+      },
+    ],
+    tags: [
+      "C#",
+      ".NET 10",
+      "ASP.NET Core",
+      "Azure IoT Hub",
+      "Azure Functions",
+      "Azure SQL",
+      "MQTT",
+      "JavaScript",
+    ],
+    github: "https://github.com/requiemdev/vehicle_api",
+  },
+  {
+    slug: "agent-qa",
+    title: "Agent QA",
+    description: (
+      <>
+        A local pre-merge QA CLI for JavaScript and TypeScript projects. Point
+        it at a repository, a running localhost URL and a one-line description
+        of the change, and it diffs the branch against its merge base, plans
+        test scenarios, and explores them in Chromium through Playwright MCP.
+        It then generates Playwright and unit tests, shows them for approval,
+        and runs them with screenshots and traces. A final AI stage reads the
+        evidence and reports the failures with a suspected cause and suggested
+        fix. Each stage is a sandboxed Codex call with a strict JSON schema, and
+        every session is saved to disk so it can be reopened, rerun or
+        exported. The screenshots show it catching a close button with an
+        empty click handler on this site.
+      </>
+    ),
+    images: [
+      { src: agentQaStart, alt: "Agent QA - Branch context and analysis" },
+      { src: agentQaPlan, alt: "Agent QA - Scenario plan and exploration" },
+      { src: agentQaRun, alt: "Agent QA - Test approval and observed failure" },
+      { src: agentQaResults, alt: "Agent QA - Coverage and final result" },
+      { src: agentQaReport, alt: "Agent QA - Saved Markdown report" },
+    ],
+    tags: [
+      "TypeScript",
+      "Node.js",
+      "Playwright",
+      "Playwright MCP",
+      "Codex CLI",
+      "CLI",
+    ],
+    github: "https://github.com/requiemdev/ai-qa-tool",
+  },
+  {
     title: "Ferrous Fellow",
     description: (
       <>
